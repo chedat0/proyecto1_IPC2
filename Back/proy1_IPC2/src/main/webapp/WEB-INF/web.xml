@@ -1,5 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
+    <display-name>proyecto1_IPC2</display-name>
+    
+    //CORS
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>otros.CorsFiltro</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFiltro</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>    
+    <filter>
+        <filter-name>AuthFiltro</filter-name>
+        <filter-class>otros.AuthFiltro</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFiltro</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+    
+    //Servlets
+    <servlet>
+        <servlet-name>AuthServlet</servlet-name>
+        <servlet-class>controlador.AuthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthServlet</servlet-name>
+        <url-pattern>/api/auth/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ClienteServlet</servlet-name>
+        <servlet-class>controlador.ClienteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClienteServlet</servlet-name>
+        <url-pattern>/api/clientes/*</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>DestinoServlet</servlet-name>
         <servlet-class>controlador.DestinoServlet</servlet-class>
@@ -8,9 +45,83 @@
         <servlet-name>DestinoServlet</servlet-name>
         <url-pattern>/api/destinos/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ProveedorServlet</servlet-name>
+        <servlet-class>controlador.ProveedorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProveedorServlet</servlet-name>
+        <url-pattern>/api/proveedores/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PaqueteServlet</servlet-name>
+        <servlet-class>controlador.PaqueteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaqueteServlet</servlet-name>
+        <url-pattern>/api/paquetes/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ServicioPaqueteServlet</servlet-name>
+        <servlet-class>controlador.ServicioPaqueteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServicioPaqueteServlet</servlet-name>
+        <url-pattern>/api/servicios/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReservacionServlet</servlet-name>
+        <servlet-class>controlador.ReservacionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReservacionServlet</servlet-name>
+        <url-pattern>/api/reservaciones/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PagoServlet</servlet-name>
+        <servlet-class>controlador.PagoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PagoServlet</servlet-name>
+        <url-pattern>/api/pagos/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ReporteServlet</servlet-name>
+        <servlet-class>controlador.ReporteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteServlet</servlet-name>
+        <url-pattern>/api/reportes/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UsuarioServlet</servlet-name>
+        <servlet-class>controlador.UsuarioServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UsuarioServlet</servlet-name>
+        <url-pattern>/api/usuarios/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CargaServlet</servlet-name>
+        <servlet-class>controlador.CargaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CargaServlet</servlet-name>
+        <url-pattern>/api/carga/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>controlador.DashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/api/dashboard/*</url-pattern>
+    </servlet-mapping>
+    
+    //Config sesión
     <session-config>
         <session-timeout>
-            30
+            60
         </session-timeout>
     </session-config>
 </web-app>
