@@ -86,7 +86,8 @@ public class PaqueteServlet extends BaseServlet {
                 sendBadRequest(response, "Ya existe un paquete con ese nombre");
             }
             int id = paqueteDAO.ingresar(p);
-            sendCreated(response, Map.of("idPaquete", id, "mensaje", "Paquete creado correctamente"));           
+            sendCreated(response, Map.of("idPaquete", id, "mensaje", "Paquete creado correctamente"));    
+            return;
         } catch (Exception e){
             sendServerError(response, e.getMessage());
         }

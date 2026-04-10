@@ -45,7 +45,8 @@
                     <div class="password-wrapper">
                         <input [type]="showPass ? 'text' : 'password'" class="form-control" formControlName="password"
                             placeholder="Contraseña" autocomplete="current-password" />
-                        <button type="button" class="pass-toggle" (click)="showPass = !showPass">                            
+                        <button type="button" class="pass-toggle" (click)="showPass = !showPass"
+                        [title]="showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'">                            
                         </button>
                     </div>
                     @if (form.get('password')?.invalid && form.get('password')?.touched) {

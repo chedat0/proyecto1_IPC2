@@ -107,14 +107,26 @@
 
 .pass-toggle {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
-    border: none;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
-    padding: 2px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, border-color .15s;
+    padding: 0;
+}
+
+.pass-toggle:hover {
+    background: #E2E8F0;
+    border-color: #94A3B8;
 }
 
 .password-wrapper input {

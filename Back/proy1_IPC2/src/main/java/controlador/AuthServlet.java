@@ -23,8 +23,7 @@ import modelo.Usuario;
 @WebServlet(name = "AuthServlet", urlPatterns = {"/api/auth/*"})
 public class AuthServlet extends BaseServlet {
        
-    private final AuthServicio authServicio = new AuthServicio();
-    private static final com.google.gson.Gson Gson = otros.GsonConfig.get();
+    private final AuthServicio authServicio = new AuthServicio();    
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)

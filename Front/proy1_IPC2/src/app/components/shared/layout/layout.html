@@ -2,9 +2,6 @@
 
     <header class="app-header">
         <div class="header-brand">
-            <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle menú">
-                <span class="menu-icon">☰</span>
-            </button>
             <div class="brand-logo">
                 <img src="logo.png" alt="Horizontes Sin Límites" class="logo-img" />
                 <div class="brand-text">
@@ -26,10 +23,11 @@
     </header>
 
     <div class="app-body">
-        <nav class="app-sidebar" [class.open]="sidebarOpen">
+        <nav class="app-sidebar">
+
             <div class="nav-section">
                 <p class="nav-section-label">Principal</p>
-                <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" (click)="closeMobile()">
+                <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
             </div>
@@ -37,50 +35,32 @@
             @if (isClienteOrAdmin) {
             <div class="nav-section">
                 <p class="nav-section-label">Atención al Cliente</p>
-                <a routerLink="/clientes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
-                    Clientes
-                </a>
-                <a routerLink="/reservaciones" routerLinkActive="nav-link--active" class="nav-link"
-                    (click)="closeMobile()">
-                    Reservaciones
-                </a>
+                <a routerLink="/clientes"      routerLinkActive="active" class="nav-link">Clientes</a>
+                <a routerLink="/reservaciones" routerLinkActive="active" class="nav-link">Reservaciones</a>
             </div>
             }
 
             @if (isOperacionesOrAdmin) {
             <div class="nav-section">
                 <p class="nav-section-label">Operaciones</p>
-                <a routerLink="/destinos" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
-                    Destinos
-                </a>
-                <a routerLink="/proveedores" routerLinkActive="nav-link--active" class="nav-link"
-                    (click)="closeMobile()">
-                    Proveedores
-                </a>
-                <a routerLink="/paquetes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
-                    Paquetes
-                </a>
+                <a routerLink="/destinos"    routerLinkActive="active" class="nav-link">Destinos</a>
+                <a routerLink="/proveedores" routerLinkActive="active" class="nav-link">Proveedores</a>
+                <a routerLink="/paquetes"    routerLinkActive="active" class="nav-link">Paquetes</a>
             </div>
             }
 
             @if (isAdmin) {
             <div class="nav-section">
                 <p class="nav-section-label">Administración</p>
-                <a routerLink="/reportes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
-                    Reportes
-                </a>
-                <a routerLink="/usuarios" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
-                    Usuarios
-                </a>
-                <a routerLink="/carga" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                <a routerLink="/reportes" routerLinkActive="active" class="nav-link">Reportes</a>
+                <a routerLink="/usuarios" routerLinkActive="active" class="nav-link">Usuarios</a>
+                <a routerLink="/carga"    routerLinkActive="active" class="nav-link">
                     <span class="nav-icon">📁</span> Carga de Datos
                 </a>
             </div>
             }
+
         </nav>
-        @if (sidebarOpen) {
-        <div class="sidebar-overlay" (click)="closeMobile()"></div>
-        }
 
         <main class="app-content">
             <router-outlet />
@@ -89,16 +69,11 @@
 
     <footer class="app-footer">
         <div class="footer-inner">
-            <div class="footer-brand">
-                <strong>Horizontes Sin Límites</strong> — Agencia de Viajes
-            </div>
+            <div class="footer-brand"><strong>Horizontes Sin Límites</strong> — Agencia de Viajes</div>
             <div class="footer-links">
-                <span>IPC2 </span>
-                <span>Jefferson Gómez - 201830892</span>
-            </div>
-            <div class="footer-copy">
-                © {{ year }} Horizontes Sin Límites - tu agencia de viajes
-            </div>
+                <span>IPC2</span>
+                <span> {{ year }} Jefferson Gómez - 201830892</span>
+            </div>            
         </div>
     </footer>
 

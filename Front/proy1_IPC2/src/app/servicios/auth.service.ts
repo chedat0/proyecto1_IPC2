@@ -15,8 +15,8 @@ export class AuthService {
         if (saved) this.userSubject.next(JSON.parse(saved));
     }
 
-    login(username: string, password: string): Observable<any> {
-        return this.http.post(`${this.base}/login`, { username, password }, { withCredentials: true, headers: { 'Content-Type': 'application/json' } })
+    login(usuario: string, password: string): Observable<any> {
+        return this.http.post(`${this.base}/login`, { usuario, contraHasheada: password }, { withCredentials: true, headers: { 'Content-Type': 'application/json' } })
             .pipe(tap((res: any) => {
                 this.userSubject.next(res);
                 sessionStorage.setItem('usuario', JSON.stringify(res));

@@ -63,12 +63,12 @@ public class ReporteServlet extends BaseServlet {
             "SELECT r.numero_reservacion, r.fecha_creacion, r.fecha_viaje, r.costo_total, r.estado, " +
             "p.nombre AS paquete, d.nombre AS destino, u.nombre_completo AS agente, " +
             "GROUP_CONCAT(cl.nombre_completo SEPARATOR ', ') AS pasajeros " +
-            "FROM reservaciones r " +
-            "JOIN paquetes p ON r.id_paquete=p.id_paquete " +
-            "JOIN destinos d ON p.id_destino=d.id_destino " +
-            "JOIN usuarios u ON r.id_agente=u.id_usuario " +
-            "LEFT JOIN reservacion_pasajeros rp ON r.id_reservacion=rp.id_reservacion " +
-            "LEFT JOIN clientes cl ON rp.id_cliente=cl.id_cliente " +
+            "FROM reservacion r " +
+            "JOIN paquete p ON r.id_paquete=p.id_paquete " +
+            "JOIN destino d ON p.id_destino=d.id_destino " +
+            "JOIN usuario u ON r.id_agente=u.id_usuario " +
+            "LEFT JOIN reservacion_pasajero rp ON r.id_reservacion=rp.id_reservacion " +
+            "LEFT JOIN cliente cl ON rp.id_cliente=cl.id_cliente " +
             "WHERE r.estado='CONFIRMADA'");
         agregarRango(sql, "r.fecha_creacion", desde, hasta);
         sql.append(" GROUP BY r.id_reservacion ORDER BY r.fecha_creacion DESC");
@@ -81,9 +81,9 @@ public class ReporteServlet extends BaseServlet {
             "SELECT r.numero_reservacion, can.fecha_cancelacion, can.monto_pagado, " +
             "can.porcentaje_reembolso, can.monto_reembolso, can.perdida_agencia, can.motivo, " +
             "p.nombre AS paquete " +
-            "FROM cancelaciones can " +
-            "JOIN reservaciones r ON can.id_reservacion=r.id_reservacion " +
-            "JOIN paquetes p ON r.id_paquete=p.id_paquete WHERE 1=1");
+            "FROM cancelacion can " +
+            "JOIN reservacion r ON can.id_reservacion=r.id_reservacion " +
+            "JOIN paquete p ON r.id_paquete=p.id_paquete WHERE 1=1");
         agregarRango(sql, "can.fecha_cancelacion", desde, hasta);
         sql.append(" ORDER BY can.fecha_cancelacion DESC");
         return queryList(c, sql.toString());
@@ -93,14 +93,14 @@ public class ReporteServlet extends BaseServlet {
     private Map<String,Object> reporteGanancias(Connection c, String desde, String hasta) throws Exception {
         StringBuilder sqlVentas = new StringBuilder(
             "SELECT COALESCE(SUM(r.costo_total - COALESCE(sp_sum.costo,0)),0) AS ganancia_bruta " +
-            "FROM reservaciones r " +
-            "JOIN paquetes p ON r.id_paquete=p.id_paquete " +
+            "FROM reservacion r " +
+            "JOIN paquete p ON r.id_paquete=p.id_paquete " +
             "LEFT JOIN (SELECT id_paquete, SUM(costo_proveedor) AS costo FROM servicios_paquete GROUP BY id_paquete) sp_sum ON sp_sum.id_paquete=p.id_paquete " +
             "WHERE r.estado='CONFIRMADA'");
         agregarRango(sqlVentas, "r.fecha_creacion", desde, hasta);
 
         StringBuilder sqlRemb = new StringBuilder(
-            "SELECT COALESCE(SUM(can.monto_reembolso),0) AS total_reembolsos FROM cancelaciones can WHERE 1=1");
+            "SELECT COALESCE(SUM(can.monto_reembolso),0) AS total_reembolsos FROM cancelacion can WHERE 1=1");
         agregarRango(sqlRemb, "can.fecha_cancelacion", desde, hasta);
 
         Map<String,Object> res = new HashMap<>();
@@ -119,9 +119,9 @@ public class ReporteServlet extends BaseServlet {
     // 4. Agente con más ventas
     private List<Map<String,Object>> reporteAgenteVentas(Connection c, String desde, String hasta) throws Exception {
         StringBuilder sql = new StringBuilder(
-            "SELECT u.nombre_completo AS agente, u.username, COUNT(r.id_reservacion) AS total_reservaciones, " +
+            "SELECT u.nombre_completo AS agente, u.usuario, COUNT(r.id_reservacion) AS total_reservaciones, " +
             "COALESCE(SUM(r.costo_total),0) AS monto_total " +
-            "FROM reservaciones r JOIN usuarios u ON r.id_agente=u.id_usuario WHERE r.estado='CONFIRMADA'");
+            "FROM reservacion r JOIN usuario u ON r.id_agente=u.id_usuario WHERE r.estado='CONFIRMADA'");
         agregarRango(sql, "r.fecha_creacion", desde, hasta);
         sql.append(" GROUP BY u.id_usuario ORDER BY monto_total DESC");
         return queryList(c, sql.toString());
@@ -130,10 +130,10 @@ public class ReporteServlet extends BaseServlet {
     // 5. Agente con más ganancias (por ganancia bruta de paquetes que vendió)
     private List<Map<String,Object>> reporteAgenteGanancias(Connection c, String desde, String hasta) throws Exception {
         StringBuilder sql = new StringBuilder(
-            "SELECT u.nombre_completo AS agente, u.username, " +
+            "SELECT u.nombre_completo AS agente, u.usuario, " +
             "COALESCE(SUM(r.costo_total - COALESCE(sp_sum.costo,0)),0) AS ganancia_generada " +
-            "FROM reservaciones r " +
-            "JOIN usuarios u ON r.id_agente=u.id_usuario " +
+            "FROM reservacion r " +
+            "JOIN usuario u ON r.id_agente=u.id_usuario " +
             "LEFT JOIN (SELECT id_paquete, SUM(costo_proveedor) AS costo FROM servicios_paquete GROUP BY id_paquete) sp_sum ON sp_sum.id_paquete=r.id_paquete " +
             "WHERE r.estado='CONFIRMADA'");
         agregarRango(sql, "r.fecha_creacion", desde, hasta);
@@ -145,8 +145,8 @@ public class ReporteServlet extends BaseServlet {
     private Map<String,Object> reportePaqueteVendido(Connection c, String desde, String hasta, boolean mas) throws Exception {
         StringBuilder sqlPaq = new StringBuilder(
             "SELECT p.id_paquete, p.nombre, d.nombre AS destino, COUNT(r.id_reservacion) AS ventas " +
-            "FROM reservaciones r JOIN paquetes p ON r.id_paquete=p.id_paquete " +
-            "JOIN destinos d ON p.id_destino=d.id_destino WHERE r.estado='CONFIRMADA'");
+            "FROM reservacion r JOIN paquete p ON r.id_paquete=p.id_paquete " +
+            "JOIN destino d ON p.id_destino=d.id_destino WHERE r.estado='CONFIRMADA'");
         agregarRango(sqlPaq, "r.fecha_creacion", desde, hasta);
         sqlPaq.append(" GROUP BY p.id_paquete ORDER BY ventas ").append(mas ? "DESC" : "ASC").append(" LIMIT 1");
 
@@ -161,7 +161,7 @@ public class ReporteServlet extends BaseServlet {
                 int idPaq = rs.getInt("id_paquete");
                 StringBuilder sqlDet = new StringBuilder(
                     "SELECT r.numero_reservacion, r.fecha_viaje, r.costo_total, r.estado, r.cantidad_pasajeros " +
-                    "FROM reservaciones r WHERE r.id_paquete=" + idPaq + " AND r.estado='CONFIRMADA'");
+                    "FROM reservacion r WHERE r.id_paquete=" + idPaq + " AND r.estado='CONFIRMADA'");
                 agregarRango(sqlDet, "r.fecha_creacion", desde, hasta);
                 res.put("reservaciones", queryList(c, sqlDet.toString()));
             }
@@ -174,9 +174,9 @@ public class ReporteServlet extends BaseServlet {
         StringBuilder sql = new StringBuilder(
             "SELECT d.nombre AS destino, d.pais, COUNT(r.id_reservacion) AS total_reservaciones, " +
             "COALESCE(SUM(r.cantidad_pasajeros),0) AS total_pasajeros " +
-            "FROM reservaciones r " +
-            "JOIN paquetes p ON r.id_paquete=p.id_paquete " +
-            "JOIN destinos d ON p.id_destino=d.id_destino WHERE r.estado IN ('CONFIRMADA','COMPLETADA')");
+            "FROM reservacion r " +
+            "JOIN paquete p ON r.id_paquete=p.id_paquete " +
+            "JOIN destino d ON p.id_destino=d.id_destino WHERE r.estado IN ('CONFIRMADA','COMPLETADA')");
         agregarRango(sql, "r.fecha_viaje", desde, hasta);
         sql.append(" GROUP BY d.id_destino ORDER BY total_reservaciones DESC");
         return queryList(c, sql.toString());

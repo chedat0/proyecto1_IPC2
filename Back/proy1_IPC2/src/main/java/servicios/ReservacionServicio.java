@@ -50,7 +50,7 @@ public class ReservacionServicio {
         // Verificar que todos los clientes existen
         for (Integer idC : idsPasajeros) {
             Cliente cl = clienteDAO.obtenerPorId(idC);
-            if (cl == null);
+            if (cl == null)
                 throw new Exception("Cliente con ID " + idC + " no encontrado.");
         }
 

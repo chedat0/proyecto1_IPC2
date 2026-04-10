@@ -35,45 +35,45 @@ public class DashboardServlet extends BaseServlet {
 
             // Total de clientes activos
             stats.put("totalClientes",
-                scalar(c, "SELECT COUNT(*) FROM clientes WHERE activo = TRUE"));
+                scalar(c, "SELECT COUNT(*) FROM cliente WHERE activo = TRUE"));
 
             // Total de reservaciones
             stats.put("totalReservaciones",
-                scalar(c, "SELECT COUNT(*) FROM reservaciones"));
+                scalar(c, "SELECT COUNT(*) FROM reservacion"));
 
             // Reservaciones creadas hoy
             stats.put("reservacionesHoy",
-                scalar(c, "SELECT COUNT(*) FROM reservaciones WHERE DATE(fecha_creacion) = CURDATE()"));
+                scalar(c, "SELECT COUNT(*) FROM reservacion WHERE DATE(fecha_creacion) = CURDATE()"));
 
             // Reservaciones pendientes de pago
             stats.put("reservacionesPendientes",
-                scalar(c, "SELECT COUNT(*) FROM reservaciones WHERE estado = 'PENDIENTE'"));
+                scalar(c, "SELECT COUNT(*) FROM reservacion WHERE estado = 'PENDIENTE'"));
 
             // Reservaciones confirmadas
             stats.put("reservacionesConfirmadas",
-                scalar(c, "SELECT COUNT(*) FROM reservaciones WHERE estado = 'CONFIRMADA'"));
+                scalar(c, "SELECT COUNT(*) FROM reservacion WHERE estado = 'CONFIRMADA'"));
 
             // Total de paquetes activos
             stats.put("totalPaquetes",
-                scalar(c, "SELECT COUNT(*) FROM paquetes WHERE activo = TRUE"));
+                scalar(c, "SELECT COUNT(*) FROM paquete WHERE activo = TRUE"));
 
             // Total de destinos activos
             stats.put("totalDestinos",
-                scalar(c, "SELECT COUNT(*) FROM destinos WHERE activo = TRUE"));
+                scalar(c, "SELECT COUNT(*) FROM destino WHERE activo = TRUE"));
 
             // Ingresos del mes actual (suma de pagos del mes)
             stats.put("ingresosMes", scalarDouble(c,
                 "SELECT COALESCE(SUM(p.monto), 0) " +
-                "FROM pagos p " +
-                "JOIN reservaciones r ON p.id_reservacion = r.id_reservacion " +
+                "FROM pago p " +
+                "JOIN reservacion r ON p.id_reservacion = r.id_reservacion " +
                 "WHERE MONTH(p.fecha_pago) = MONTH(CURDATE()) " +
                 "AND YEAR(p.fecha_pago) = YEAR(CURDATE())"));
 
             // Paquetes con alta demanda (más del 80% de capacidad ocupada)
             stats.put("paquetesAltaDemanda", scalar(c,
-                "SELECT COUNT(*) FROM paquetes p " +
+                "SELECT COUNT(*) FROM paquete p " +
                 "WHERE p.activo = TRUE AND (" +
-                "   SELECT COUNT(*) FROM reservaciones r " +
+                "   SELECT COUNT(*) FROM reservacion r " +
                 "   WHERE r.id_paquete = p.id_paquete " +
                 "   AND r.estado IN ('PENDIENTE','CONFIRMADA') " +
                 "   AND r.fecha_viaje >= CURDATE()" +

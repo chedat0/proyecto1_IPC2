@@ -35,6 +35,7 @@ public class ServicioPaqueteServlet extends BaseServlet {
                 }
             if (s.getCostoProveedor() <= 0){
                 sendBadRequest(res, "El costo debe ser mayor a cero");
+                return;
             }
             
             int id = dao.ingresar(s);

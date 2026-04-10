@@ -9,8 +9,7 @@ import { AuthService } from '../../../servicios/auth.service';
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
-export class LayoutComponent implements OnInit {
-  sidebarOpen = false;
+export class LayoutComponent implements OnInit {  
   year = new Date().getFullYear();
 
   constructor(private auth: AuthService, private router: Router) {}
@@ -30,9 +29,6 @@ export class LayoutComponent implements OnInit {
     const r = this.user?.rol;
     return r === 3 ? 'badge-admin' : r === 2 ? 'badge-operaciones' : 'badge-cliente';
   }
-
-  toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }
-  closeMobile()   { if (window.innerWidth <= 768) this.sidebarOpen = false; }
 
   logout() {
     this.auth.logout().subscribe({ complete: () => this.router.navigate(['/login']) });
