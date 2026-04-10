@@ -1,0 +1,161 @@
+<div class="page-container carga-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Carga de Datos</h1>
+            <p>Importar datos iniciales desde archivo de texto</p>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+            <h3>Formato del Archivo</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                El archivo debe ser <strong>.txt</strong> con codificación <strong>UTF-8</strong>.
+                <span>ℹ️</span>
+                Cada línea es una instrucción. Las líneas que empiezan con <code>#</code> son comentarios.
+            </div>
+            <div class="format-list">
+                <div class="format-item">
+                    <code>USUARIO("username","password",rol)</code>
+                    <span>rol: 1=Cliente, 2=Operaciones, 3=Admin</span>
+                </div>
+                <div class="format-item">
+                    <code>DESTINO("nombre","pais","descripcion")</code>
+                </div>
+                <div class="format-item">
+                    <code>PROVEEDOR("nombre",tipo,"pais")</code>
+                    <span>tipo: 1=Aerolínea, 2=Hotel, 3=Tour, 4=Traslado, 5=Otro</span>
+                </div>
+                <div class="format-item">
+                    <code>PAQUETE("nombre","destino",dias,precio,capacidad)</code>
+                </div>
+                <div class="format-item">
+                    <code>SERVICIO_PAQUETE("paquete","proveedor","descripcion",costo)</code>
+                </div>
+                <div class="format-item">
+                    <code>CLIENTE("dpi","nombre","dd/mm/yyyy","tel","email","nacionalidad")</code>
+                </div>
+                <div class="format-item">
+                    <code>RESERVACION("paquete","agente","dd/mm/yyyy","dpi1|dpi2")</code>
+                </div>
+                <div class="format-item">
+                    <code>PAGO("RES-00001",monto,metodo,"dd/mm/yyyy")</code>
+                    <span>metodo: 1=Efectivo, 2=Tarjeta, 3=Transferencia</span>
+                </div>
+            </div>
+            <div class="alert alert-warning" style="margin-top:14px">
+                <span>⚠️</span>
+                El orden importa: USUARIO → DESTINO → PROVEEDOR → PAQUETE → SERVICIO_PAQUETE → CLIENTE → RESERVACION →
+                PAGO
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Cargar Archivo</h3>
+        </div>
+        <div class="card-body">
+
+            <div class="upload-zone" [class.upload-zone--active]="dragOver"
+                [class.upload-zone--selected]="archivoSeleccionado" (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave()" (drop)="onDrop($event)" (click)="fileInput.click()">
+                <div class="upload-icon">📁</div>
+                @if (!archivoSeleccionado) {
+                <p class="upload-title"><strong>Arrastra tu archivo aquí</strong> o haz clic para seleccionar</p>
+                <p class="upload-hint">Solo archivos .txt · Máximo 1MB</p>
+                } @else {
+                <p class="upload-title"><strong>{{ archivoSeleccionado.name }}</strong></p>
+                <p class="upload-hint">{{ (archivoSeleccionado.size / 1024) | number:'1.0-0' }} KB · Listo para procesar
+                </p>
+                }
+                <input #fileInput type="file" accept=".txt" class="file-input-hidden"
+                    (change)="onFileSelected($event)" />
+            </div>
+
+            @if (archivoSeleccionado) {
+            <div class="file-preview">
+                <div class="file-info">
+                    <span class="file-icon">📄</span>
+                    <div>
+                        <strong>{{ archivoSeleccionado.name }}</strong>
+                        <span class="file-size">{{ (archivoSeleccionado.size / 1024) | number:'1.0-0' }} KB</span>
+                    </div>
+                </div>
+                <button class="btn btn-danger btn-sm" (click)="quitarArchivo()">✕ Quitar</button>
+            </div>
+            }
+
+            <button class="btn btn-primary btn-full" [disabled]="!archivoSeleccionado || loading"
+                (click)="procesarArchivo()">
+                @if (loading) {
+                <span class="btn-spinner-dark"></span>
+                Procesando archivo...
+                } @else {
+                Procesar Archivo
+                }
+            </button>
+
+        </div>
+    </div>
+
+    
+    @if (resultado) {
+    <div class="card result-card">
+        <div class="card-header">
+            <h3>Resultado de la Carga</h3>
+            <span class="badge" [class]="resultado.registrosError > 0 ? 'badge-cancelada' : 'badge-confirmada'">
+                {{ resultado.registrosError > 0 ? 'Con errores' : 'Exitoso' }}
+            </span>
+        </div>
+        <div class="card-body">
+        
+            <div class="grid-3 result-stats">
+                <div class="result-stat">
+                    <div class="result-num">{{ resultado.registrosProcesados }}</div>
+                    <div class="result-lbl">Procesados</div>
+                </div>
+                <div class="result-stat result-stat--success">
+                    <div class="result-num success-num">{{ resultado.registrosExitosos }}</div>
+                    <div class="result-lbl">Exitosos</div>
+                </div>
+                <div class="result-stat result-stat--error">
+                    <div class="result-num error-num">{{ resultado.registrosError }}</div>
+                    <div class="result-lbl">Con errores</div>
+                </div>
+            </div>
+            
+            @if (resultado.registrosProcesados > 0) {
+            <div class="success-bar-section">
+                <div class="success-bar-header">
+                    <span>Tasa de éxito</span>
+                    <span class="success-pct">{{ porcentajeExito }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.width]="porcentajeExito + '%'"></div>
+                </div>
+            </div>
+            }
+        
+            @if (resultado.errores && resultado.errores.length > 0) {
+            <div class="errores-section">
+                <p class="section-title">Errores encontrados</p>
+                <div class="errores-list">
+                    @for (e of resultado.errores; track $index) {
+                    <div class="error-item">
+                        <span class="error-icon">⚠️</span>
+                        <span>{{ e }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+        </div>
+    </div>
+    }
+
+</div>

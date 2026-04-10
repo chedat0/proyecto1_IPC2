@@ -1,0 +1,127 @@
+.detail-top {
+    margin-bottom: 24px;
+    align-items: start;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gris-parrafo);
+    text-transform: uppercase;
+}
+
+.precio {
+    color: var(--azul-marino);
+}
+
+.costo {
+    color: var(--peligro);
+    font-weight: 600;
+}
+
+.ganancia {
+    color: #2D7D46;
+    font-weight: 600;
+}
+
+.descripcion {
+    margin-top: 12px;
+    color: var(--gris-parrafo);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* Barras financieras */
+.finance-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.finance-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.finance-label span {
+    color: var(--gris-parrafo);
+}
+
+.finance-bar {
+    background: var(--borde);
+    border-radius: 6px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.finance-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .5s;
+}
+
+.finance-fill--danger {
+    background: var(--peligro);
+}
+
+.finance-fill--success {
+    background: #2D7D46;
+}
+
+/* Proyección */
+.proyeccion {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.proyeccion-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.proyeccion-row:last-child {
+    border-bottom: none;
+}
+
+.proyeccion-row span {
+    color: var(--gris-parrafo);
+}
+
+/* Footer total */
+.total-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.total-footer span {
+    color: var(--gris-parrafo);
+}

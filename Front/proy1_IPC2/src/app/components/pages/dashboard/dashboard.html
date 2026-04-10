@@ -1,0 +1,127 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Bienvenido, <strong>{{ usuario?.nombreCompleto }}</strong> — {{ usuario?.rolNombre }}</p>
+        </div>
+        <span class="badge badge-activo">Sistema activo</span>
+    </div>
+
+    @if (loading) {
+    <div class="loading-center">
+        <div class="spinner"></div>
+    </div>
+    }
+
+    @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+    }
+
+    @if (!loading && stats) {
+
+    <!-- Estadísticas principales -->
+    <div class="grid-4 stats-row">
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.reservacionesHoy }}</div>
+            <div class="stat-label">Reservaciones hoy</div>
+        </div>
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.reservacionesPendientes }}</div>
+            <div class="stat-label">Pendientes de pago</div>
+        </div>
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.totalClientes }}</div>
+            <div class="stat-label">Clientes registrados</div>
+        </div>
+        <div class="stat-card stat-card--highlight">            
+            <div class="stat-value stat-value--sm">Q.{{ stats.ingresosMes | number:'1.0-0' }}</div>
+            <div class="stat-label">Ingresos del mes</div>
+        </div>
+    </div>
+
+    <div class="grid-3 stats-row">
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.reservacionesConfirmadas }}</div>
+            <div class="stat-label">Reservaciones confirmadas</div>
+        </div>
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.totalPaquetes }}</div>
+            <div class="stat-label">Paquetes activos</div>
+        </div>
+        <div class="stat-card">            
+            <div class="stat-value">{{ stats.totalDestinos }}</div>
+            <div class="stat-label">Destinos disponibles</div>
+        </div>
+    </div>
+
+    <!-- Alerta alta demanda -->
+    @if (stats.paquetesAltaDemanda > 0) {
+    <div class="alert alert-warning">
+        <span>⚠️</span>
+        <div>
+            <strong>Atención: </strong>
+            Hay <strong>{{ stats.paquetesAltaDemanda }}</strong> paquete(s) con más del 80% de capacidad ocupada.
+            <a routerLink="/paquetes" class="alert-link">Ver paquetes →</a>
+        </div>
+    </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Accesos rápidos</h3>
+        </div>
+        <div class="card-body">
+            <div class="quick-actions">
+
+                @if (esClienteOAdmin) {
+                <a routerLink="/reservaciones/nueva" class="quick-btn">
+                    <span class="q-icon">➕</span>
+                    <div>
+                        <strong>Nueva Reservación</strong>
+                        <span>Registrar reserva para cliente</span>
+                    </div>
+                </a>
+                <a routerLink="/clientes/nuevo" class="quick-btn">
+                    <span class="q-icon">👤</span>
+                    <div>
+                        <strong>Nuevo Cliente</strong>
+                        <span>Registrar cliente en sistema</span>
+                    </div>
+                </a>
+                }
+
+                @if (esOperacionesOAdmin) {
+                <a routerLink="/paquetes" class="quick-btn">
+                    <span class="q-icon">✈️</span>
+                    <div>
+                        <strong>Gestionar Paquetes</strong>
+                        <span>Ver y editar paquetes</span>
+                    </div>
+                </a>
+                }
+
+                @if (esAdmin) {
+                <a routerLink="/reportes" class="quick-btn">
+                    <span class="q-icon">📈</span>
+                    <div>
+                        <strong>Ver Reportes</strong>
+                        <span>Reportes financieros</span>
+                    </div>
+                </a>
+                <a routerLink="/carga" class="quick-btn">
+                    <span class="q-icon">📁</span>
+                    <div>
+                        <strong>Carga de Datos</strong>
+                        <span>Importar datos desde archivo</span>
+                    </div>
+                </a>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    }
+
+</div>

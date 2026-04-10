@@ -1,0 +1,11 @@
+.text-right  { 
+    text-align: right; 
+}
+
+.td-truncate { 
+    max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+
+.td-actions  { 
+    text-align: right; display: flex; gap: 6px; justify-content: flex-end; 
+}

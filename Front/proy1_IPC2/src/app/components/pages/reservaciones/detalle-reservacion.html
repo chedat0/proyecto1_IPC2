@@ -1,0 +1,232 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>{{ reservacion?.numeroReservacion || 'Detalle de Reservación' }}</h1>
+            <p>Detalle y gestión de la reservación</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" routerLink="/reservaciones">← Volver</button>
+            @if (reservacion?.estado === 'CONFIRMADA') {
+            <button class="btn btn-primary" (click)="descargarComprobante()">📄 Comprobante PDF</button>
+            }
+        </div>
+    </div>
+
+    @if (loading) {
+    <div class="loading-center">
+        <div class="spinner"></div>
+    </div>
+    }
+
+    @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+    }
+
+    @if (success) {
+    <div class="alert alert-success">{{ success }}</div>
+    }
+
+    @if (reservacion && !loading) {
+
+    <div class="grid-2 detail-top">
+    
+        <div class="card">
+            <div class="card-header">
+                <h3>Información de la Reservación</h3>
+                <span class="badge" [class]="'badge-' + reservacion.estado!.toLowerCase()">
+                    {{ reservacion.estado }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">No.
+                            Reservación</span><code>{{ reservacion.numeroReservacion }}</code></div>
+                    <div class="detail-row"><span class="detail-label">Paquete</span><strong>{{
+                            reservacion.paqueteNombre }}</strong></div>
+                    <div class="detail-row"><span class="detail-label">Destino</span><span>{{ reservacion.destinoNombre
+                            }}</span></div>
+                    <div class="detail-row"><span class="detail-label">Fecha de viaje</span><strong>{{
+                            reservacion.fechaViaje }}</strong></div>
+                    <div class="detail-row"><span class="detail-label">Pasajeros</span><span>{{
+                            reservacion.cantidadPasajeros }}</span></div>
+                    <div class="detail-row"><span class="detail-label">Agente</span><span>{{ reservacion.agenteNombre
+                            }}</span></div>
+                    <div class="detail-row"><span class="detail-label">Fecha creación</span><span>{{
+                            reservacion.fechaCreacion }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Estado Financiero</h3>
+            </div>
+            <div class="card-body">
+                <div class="finance-row">
+                    <span>Costo total</span>
+                    <strong>Q.{{ reservacion.costoTotal | number:'1.2-2' }}</strong>
+                </div>
+                <div class="finance-row">
+                    <span>Total pagado</span>
+                    <strong class="monto-pagado">Q.{{ reservacion.totalPagado | number:'1.2-2' }}</strong>
+                </div>
+                <div class="finance-row finance-total">
+                    <strong>Saldo pendiente</strong>
+                    <strong class="saldo-pendiente">Q.{{ reservacion.saldoPendiente | number:'1.2-2' }}</strong>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Progreso de pago</span>
+                        <span class="progress-pct">{{ porcentajePago | number:'1.0-0' }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" [style.width]="porcentajePago + '%'"></div>
+                    </div>
+                </div>
+
+                @if (puedeRegistrarPago) {
+                <button class="btn btn-primary btn-full" (click)="showPagoModal = true">
+                    + Registrar Pago
+                </button>
+                }
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+            <h3>Pasajeros</h3>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>DPI / Pasaporte</th>
+                        <th>Nombre</th>
+                        <th>Nacionalidad</th>
+                        <th>Correo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (p of reservacion.pasajeros || []; track p.idCliente) {
+                    <tr>
+                        <td><code>{{ p.dpiPasaporte }}</code></td>
+                        <td><strong>{{ p.nombreCompleto }}</strong></td>
+                        <td>{{ p.nacionalidad || '—' }}</td>
+                        <td>{{ p.email || '—' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+            <h3>Historial de Pagos</h3>
+            <span class="badge badge-confirmada">{{ pagos.length }} pago(s)</span>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Comprobante</th>
+                        <th>Fecha</th>
+                        <th>Método</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (p of pagos; track p.idPago) {
+                    <tr>
+                        <td><code>{{ p.numeroComprobante }}</code></td>
+                        <td>{{ p.fechaPago }}</td>
+                        <td>{{ metodo(p.metodoPago) }}</td>
+                        <td><strong>Q.{{ p.monto | number:'1.2-2' }}</strong></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @if (pagos.length === 0) {
+            <div class="empty-state">
+                <p>Sin pagos registrados</p>
+            </div>
+            }
+        </div>
+    </div>
+
+    @if (puedeCancelar) {
+    <div class="card">
+        <div class="card-header">
+            <h3 class="cancelar-titulo">Cancelar Reservación</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <span>⚠️</span>
+                <div>
+                    <strong>Política de cancelación:</strong>
+                    Más de 30 días = 100% reembolso · 15-30 días = 70% · 7-14 días = 40% · Menos de 7 días = sin
+                    cancelación
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:12px">
+                <label class="form-label">Motivo de cancelación</label>
+                <textarea class="form-control" [(ngModel)]="motivoCancelacion" rows="3"
+                    placeholder="Describe el motivo de la cancelación...">
+            </textarea>
+            </div>
+            <button class="btn btn-danger" (click)="procesarCancelacion()" [disabled]="loadingCancelar">
+                {{ loadingCancelar ? 'Procesando...' : 'Procesar Cancelación' }}
+            </button>
+        </div>
+    </div>
+    }
+
+    }
+
+</div>
+
+@if (showPagoModal) {
+<div class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Registrar Pago</h3>
+            <button class="btn btn-secondary btn-sm" (click)="showPagoModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="pagoForm">
+                <div class="form-group">
+                    <label class="form-label">Monto a pagar</label>
+                    <input type="number" class="form-control" formControlName="monto"
+                        [placeholder]="'Saldo pendiente: Q.' + (reservacion?.saldoPendiente | number:'1.2-2')" min="1"
+                        step="0.01" />
+                    @if (pagoForm.get('monto')?.invalid && pagoForm.get('monto')?.touched) {
+                    <span class="form-error">Ingresa un monto válido</span>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Método de Pago</label>
+                    <select class="form-control" formControlName="metodoPago">
+                        <option value="">Selecciona...</option>
+                        <option value="1">💵 Efectivo</option>
+                        <option value="2">💳 Tarjeta de Crédito/Débito</option>
+                        <option value="3">🏦 Transferencia Bancaria</option>
+                    </select>
+                    @if (pagoForm.get('metodoPago')?.invalid && pagoForm.get('metodoPago')?.touched) {
+                    <span class="form-error">Selecciona el método de pago</span>
+                    }
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="showPagoModal = false">Cancelar</button>
+            <button class="btn btn-primary" (click)="registrarPago()" [disabled]="loadingPago">
+                {{ loadingPago ? 'Procesando...' : 'Confirmar Pago' }}
+            </button>
+        </div>
+    </div>
+</div>
+}

@@ -1,0 +1,223 @@
+<div class="page-container form-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Nueva Reservación</h1>
+            <p>Completa los datos para crear una reservación</p>
+        </div>
+        <button class="btn btn-secondary" routerLink="/reservaciones">← Volver</button>
+    </div>
+
+    <div class="steps-bar">
+        <div class="step" [class.active]="paso >= 1" [class.done]="paso > 1">
+            <div class="step-num">1</div>
+            <span>Paquete</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="paso >= 2" [class.done]="paso > 2">
+            <div class="step-num">2</div>
+            <span>Pasajeros</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="paso >= 3">
+            <div class="step-num">3</div>
+            <span>Confirmar</span>
+        </div>
+    </div>
+
+    @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+    }
+
+    @if (success) {
+    <div class="alert alert-success">{{ success }}</div>
+    }
+
+    @if (paso === 1) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Paso 1 — Seleccionar Paquete y Fecha</h3>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="paso1Form">
+
+                <div class="form-group">
+                    <label class="form-label">Destino (opcional — para filtrar)</label>
+                    <select class="form-control" [(ngModel)]="idDestinoFiltro" [ngModelOptions]="{standalone:true}"
+                        (change)="filtrarPaquetes()">
+                        <option value="">Todos los destinos</option>
+                        @for (d of destinos; track d.idDestino) {
+                        <option [value]="d.idDestino">{{ d.nombre }} — {{ d.pais }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Paquete Turístico *</label>
+                    <select class="form-control" formControlName="idPaquete" (change)="onPaqueteChange()">
+                        <option value="">Selecciona un paquete...</option>
+                        @for (p of paquetesFiltrados; track p.idPaquete) {
+                        <option [value]="p.idPaquete">
+                            {{ p.nombre }} — Q.{{ p.precioVenta | number:'1.2-2' }} / persona · {{ p.duracionDias }}
+                            días
+                        </option>
+                        }
+                    </select>
+                    @if (paso1Form.get('idPaquete')?.invalid && paso1Form.get('idPaquete')?.touched) {
+                    <span class="form-error">Debes seleccionar un paquete</span>
+                    }
+                </div>
+
+                @if (paqueteSeleccionado) {
+                <div class="paquete-preview">
+                    <div class="preview-header">
+                        <strong>{{ paqueteSeleccionado.nombre }}</strong>
+                        <span class="badge badge-activo">{{ paqueteSeleccionado.duracionDias }} días</span>
+                    </div>
+                    <div class="preview-grid">
+                        <div><span class="preview-lbl">Destino</span><span>{{ paqueteSeleccionado.destinoNombre
+                                }}</span></div>
+                        <div><span class="preview-lbl">Precio por persona</span><span>Q.{{
+                                paqueteSeleccionado.precioVenta | number:'1.2-2' }}</span></div>
+                        <div><span class="preview-lbl">Capacidad máxima</span><span>{{
+                                paqueteSeleccionado.capacidadMaxima }} personas</span></div>
+                    </div>
+                    @if (paqueteSeleccionado.descripcion) {
+                    <p class="preview-desc">{{ paqueteSeleccionado.descripcion }}</p>
+                    }
+                </div>
+                }
+
+                <div class="form-group">
+                    <label class="form-label">Fecha de Viaje *</label>
+                    <input type="date" class="form-control" formControlName="fechaViaje" [min]="hoy" />
+                    @if (paso1Form.get('fechaViaje')?.invalid && paso1Form.get('fechaViaje')?.touched) {
+                    <span class="form-error">La fecha de viaje es obligatoria</span>
+                    }
+                </div>
+
+            </form>
+        </div>
+        <div class="card-footer step-footer">
+            <button class="btn btn-primary" (click)="irPaso2()" [disabled]="paso1Form.invalid">
+                Siguiente →
+            </button>
+        </div>
+    </div>
+    }
+
+    @if (paso === 2) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Paso 2 — Agregar Pasajeros</h3>
+            <span class="badge badge-confirmada">{{ pasajerosSeleccionados.length }} agregados</span>
+        </div>
+        <div class="card-body">
+
+            <div class="form-group">
+                <label class="form-label">Buscar cliente por DPI o nombre</label>
+                <div class="search-row">
+                    <input type="text" class="form-control" [(ngModel)]="busquedaCliente"
+                        placeholder="DPI o nombre del pasajero..." (keyup.enter)="buscarCliente()" />
+                    <button class="btn btn-primary" (click)="buscarCliente()">Buscar</button>
+                </div>
+            </div>
+
+            @if (resultadosBusqueda.length > 0) {
+            <div class="search-results">
+                @for (c of resultadosBusqueda; track c.idCliente) {
+                <div class="search-result-item">
+                    <div>
+                        <strong>{{ c.nombreCompleto }}</strong>
+                        <span class="dpi-label">{{ c.dpiPasaporte }}</span>
+                    </div>
+                    <button class="btn btn-sm" [class.btn-primary]="!isPasajeroAgregado(c.idCliente!)"
+                        [class.btn-secondary]="isPasajeroAgregado(c.idCliente!)" (click)="agregarPasajero(c)"
+                        [disabled]="isPasajeroAgregado(c.idCliente!)">
+                        {{ isPasajeroAgregado(c.idCliente!) ? 'Agregado ✓' : 'Agregar' }}
+                    </button>
+                </div>
+                }
+            </div>
+            }
+
+            @if (sinResultados) {
+            <div class="alert alert-warning">
+                No se encontraron clientes.
+                <a routerLink="/clientes/nuevo">Registrar nuevo</a>
+            </div>
+            }
+
+            @if (pasajerosSeleccionados.length > 0) {
+            <div class="pasajeros-list">
+                <p class="section-title">Pasajeros en esta reservación</p>
+                @for (p of pasajerosSeleccionados; track p.idCliente) {
+                <div class="pasajero-item">
+                    <div>
+                        <strong>{{ p.nombreCompleto }}</strong>
+                        <span class="dpi-label">{{ p.dpiPasaporte }}</span>
+                    </div>
+                    <button class="btn btn-danger btn-sm" (click)="quitarPasajero(p.idCliente!)">
+                        Quitar
+                    </button>
+                </div>
+                }
+            </div>
+            }
+
+        </div>
+        <div class="card-footer step-footer step-footer--between">
+            <button class="btn btn-secondary" (click)="paso = 1">← Anterior</button>
+            <button class="btn btn-primary" (click)="irPaso3()" [disabled]="pasajerosSeleccionados.length === 0">
+                Continuar ({{ pasajerosSeleccionados.length }} pasajero(s)) →
+            </button>
+        </div>
+    </div>
+    }
+
+    @if (paso === 3) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Paso 3 — Confirmar Reservación</h3>
+        </div>
+        <div class="card-body">
+
+            <div class="resumen-box">
+                <div class="resumen-row"><span>Paquete</span><strong>{{ paqueteSeleccionado?.nombre }}</strong></div>
+                <div class="resumen-row"><span>Destino</span><strong>{{ paqueteSeleccionado?.destinoNombre }}</strong>
+                </div>
+                <div class="resumen-row"><span>Duración</span><strong>{{ paqueteSeleccionado?.duracionDias }}
+                        días</strong></div>
+                <div class="resumen-row"><span>Fecha de viaje</span><strong>{{ paso1Form.get('fechaViaje')?.value
+                        }}</strong></div>
+                <div class="resumen-row"><span>Cantidad de pasajeros</span><strong>{{ pasajerosSeleccionados.length
+                        }}</strong></div>
+                <div class="resumen-row"><span>Precio por persona</span><strong>Q.{{ paqueteSeleccionado?.precioVenta |
+                        number:'1.2-2' }}</strong></div>
+                <div class="resumen-row resumen-total">
+                    <span>COSTO TOTAL</span>
+                    <strong>Q.{{ costoTotal | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+
+            <div class="pasajeros-confirmacion">
+                <p class="section-title">Pasajeros incluidos</p>
+                @for (p of pasajerosSeleccionados; track p.idCliente; let i = $index) {
+                <div class="pasajero-item">
+                    <span>{{ i + 1 }}. <strong>{{ p.nombreCompleto }}</strong></span>
+                    <span class="dpi-label">{{ p.dpiPasaporte }}</span>
+                </div>
+                }
+            </div>
+
+        </div>
+        <div class="card-footer step-footer step-footer--between">
+            <button class="btn btn-secondary" (click)="paso = 2">← Anterior</button>
+            <button class="btn btn-primary" (click)="confirmarReservacion()" [disabled]="loading">
+                {{ loading ? 'Creando reservación...' : '✓ Confirmar y Crear Reservación' }}
+            </button>
+        </div>
+    </div>
+    }
+
+</div>

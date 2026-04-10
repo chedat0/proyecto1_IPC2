@@ -4,7 +4,7 @@
     
     //CORS
     <filter>
-        <filter-name>CorsFilter</filter-name>
+        <filter-name>CorsFiltro</filter-name>
         <filter-class>otros.CorsFiltro</filter-class>
     </filter>
     <filter-mapping>

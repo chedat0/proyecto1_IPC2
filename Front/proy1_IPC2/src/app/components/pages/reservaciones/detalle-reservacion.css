@@ -1,0 +1,105 @@
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.detail-top {
+    margin-bottom: 24px;
+    align-items: start;
+}
+
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gris-parrafo);
+    text-transform: uppercase;
+}
+
+.finance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.finance-row span {
+    color: var(--gris-parrafo);
+}
+
+.finance-total {
+    border-top: 2px solid var(--azul-marino);
+    margin-top: 8px;
+    padding-top: 12px;
+    border-bottom: none;
+}
+
+.monto-pagado {
+    color: #2D7D46;
+}
+
+.saldo-pendiente {
+    font-size: 1.2rem;
+    color: #D97706;
+}
+
+.progress-section {
+    margin-top: 16px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+}
+
+.progress-header span {
+    color: var(--gris-parrafo);
+}
+
+.progress-pct {
+    font-weight: 700;
+    color: var(--azul-marino);
+}
+
+.progress-bar {
+    background: var(--borde);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: var(--azul-marino);
+    height: 100%;
+    border-radius: 10px;
+    transition: width .5s;
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.cancelar-titulo {
+    color: var(--peligro);
+}

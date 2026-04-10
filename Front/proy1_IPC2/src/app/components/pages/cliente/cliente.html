@@ -1,0 +1,84 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Clientes</h1>
+            <p>Gestión de clientes registrados en el sistema</p>
+        </div>
+        <a routerLink="/clientes/nuevo" class="btn btn-primary">+ Nuevo Cliente</a>
+    </div>
+
+    <div class="card search-card">
+        <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" placeholder="Buscar por nombre, DPI o correo..."
+                [(ngModel)]="searchQ" (input)="onSearch()" />
+        </div>
+    </div>
+
+    <div class="card">
+
+        @if (loading) {
+        <div class="loading-center">
+            <div class="spinner"></div>
+        </div>
+        }
+
+        @if (error) {
+        <div class="alert alert-error" style="margin:16px">{{ error }}</div>
+        }
+
+        @if (!loading && !error) {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>DPI / Pasaporte</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Nacionalidad</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (c of clientes; track c.idCliente) {
+                    <tr>
+                        <td><code>{{ c.dpiPasaporte }}</code></td>
+                        <td><strong>{{ c.nombreCompleto }}</strong></td>
+                        <td>{{ c.telefono || '—' }}</td>
+                        <td>{{ c.email || '—' }}</td>
+                        <td>{{ c.nacionalidad || '—' }}</td>
+                        <td>
+                            <span class="badge" [class]="c.activo ? 'badge-activo' : 'badge-inactivo'">
+                                {{ c.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <a [routerLink]="['/clientes', c.idCliente]" class="btn btn-secondary btn-sm">
+                                Ver detalle
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (clientes.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h4>No se encontraron clientes</h4>
+            @if (searchQ) {
+            <p>Intenta con otros términos de búsqueda</p>
+            }
+            <a routerLink="/clientes/nuevo" class="btn btn-primary" style="margin-top:16px">
+                Registrar cliente
+            </a>
+        </div>
+        }
+        }
+
+    </div>
+</div>

@@ -1,0 +1,121 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Proveedores</h1>
+            <p>Gestión de proveedores de servicios</p>
+        </div>
+        <button class="btn btn-primary" (click)="abrirModal()">+ Nuevo Proveedor</button>
+    </div>
+
+    @if (error) { <div class="alert alert-error">{{ error }}</div> }
+    @if (success) { <div class="alert alert-success">{{ success }}</div> }
+
+    <div class="card">
+        @if (loading) {
+        <div class="loading-center">
+            <div class="spinner"></div>
+        </div>
+        }
+
+        @if (!loading) {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo de Servicio</th>
+                        <th>País</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (p of proveedores; track p.idProveedor) {
+                    <tr>
+                        <td><strong>{{ p.nombre }}</strong></td>
+                        <td><span class="badge badge-cliente">{{ tipoNombre(p.tipoServicio) }}</span></td>
+                        <td>{{ p.paisOperacion || '—' }}</td>
+                        <td>{{ p.telefono || '—' }}</td>
+                        <td>{{ p.email || '—' }}</td>
+                        <td class="text-right">
+                            <button class="btn btn-secondary btn-sm" (click)="editar(p)">Editar</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (proveedores.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">🏢</div>
+            <p>Sin proveedores registrados</p>
+        </div>
+        }
+        }
+    </div>
+
+</div>
+
+@if (showModal) {
+<div class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>{{ editando ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</h3>
+            <button class="btn btn-secondary btn-sm" (click)="cerrar()">✕</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="form">
+                <div class="form-group">
+                    <label class="form-label">Nombre *</label>
+                    <input type="text" class="form-control" formControlName="nombre" />
+                    @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+                    <span class="form-error">Requerido</span>
+                    }
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Servicio *</label>
+                        <select class="form-control" formControlName="tipoServicio">
+                            <option value="">Selecciona...</option>
+                            <option value="1">Aerolínea</option>
+                            <option value="2">Hotel</option>
+                            <option value="3">Tour</option>
+                            <option value="4">Traslado</option>
+                            <option value="5">Otro</option>
+                        </select>
+                        @if (form.get('tipoServicio')?.invalid && form.get('tipoServicio')?.touched) {
+                        <span class="form-error">Requerido</span>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">País de Operación</label>
+                        <input type="text" class="form-control" formControlName="paisOperacion" />
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" formControlName="telefono" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" formControlName="email" />
+                        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                        <span class="form-error">Correo inválido</span>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-primary" (click)="guardar()" [disabled]="saving">
+                {{ saving ? 'Guardando...' : 'Guardar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}

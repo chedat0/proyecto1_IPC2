@@ -1,0 +1,150 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Detalle del Cliente</h1>
+            <p>Historial completo del cliente</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" (click)="regresar()">← Volver</button>
+            @if (cliente) {
+            <a [routerLink]="['/clientes', clienteId]" class="btn btn-primary">Editar datos</a>
+            }
+        </div>
+    </div>
+
+    @if (loading) {
+    <div class="loading-center">
+        <div class="spinner"></div>
+    </div>
+    }
+
+    @if (error) {
+    <div class="alert alert-error">{{ error }}</div>
+    }
+
+    @if (cliente && !loading) {
+
+    <div class="grid-2 detail-top">
+    
+        <div class="card">
+            <div class="card-header">
+                <h3>Datos Personales</h3>
+                <span class="badge" [class]="cliente.activo ? 'badge-activo' : 'badge-inactivo'">
+                    {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="detail-grid">
+                    <div class="detail-row">
+                        <span class="detail-label">DPI / Pasaporte</span>
+                        <code>{{ cliente.dpiPasaporte }}</code>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nombre completo</span>
+                        <strong>{{ cliente.nombreCompleto }}</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Fecha de nacimiento</span>
+                        <span>{{ cliente.fechaNacimiento }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Nacionalidad</span>
+                        <span>{{ cliente.nacionalidad || '—' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Teléfono</span>
+                        <span>{{ cliente.telefono || '—' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Correo electrónico</span>
+                        <span>{{ cliente.email || '—' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a routerLink="/reservaciones/nueva" class="btn btn-primary btn-sm">+ Nueva Reservación</a>
+            </div>
+        </div>
+    
+        <div class="card">
+            <div class="card-header">
+                <h3>Resumen de Viajes</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid-2 mini-stats">
+                    <div class="mini-stat">
+                        <div class="mini-val">{{ totalReservaciones }}</div>
+                        <div class="mini-lbl">Total reservaciones</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-val">{{ reservacionesConfirmadas }}</div>
+                        <div class="mini-lbl">Confirmadas</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-val">{{ reservacionesPendientes }}</div>
+                        <div class="mini-lbl">Pendientes de pago</div>
+                    </div>
+                    <div class="mini-stat mini-stat--highlight">
+                        <div class="mini-val mini-val--sm">Q.{{ totalGastado | number:'1.2-2' }}</div>
+                        <div class="mini-lbl">Total gastado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Historial de Reservaciones</h3>
+            <span class="badge badge-confirmada">{{ reservaciones.length }} registros</span>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No. Reservación</th>
+                        <th>Paquete</th>
+                        <th>Destino</th>
+                        <th>Fecha Viaje</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (r of reservaciones; track r.idReservacion) {
+                    <tr>
+                        <td><code>{{ r.numeroReservacion }}</code></td>
+                        <td>{{ r.paqueteNombre }}</td>
+                        <td>{{ r.destinoNombre }}</td>
+                        <td>{{ r.fechaViaje }}</td>
+                        <td>Q.{{ r.costoTotal | number:'1.2-2' }}</td>
+                        <td>
+                            <span class="badge" [class]="'badge-' + r.estado!.toLowerCase()">
+                                {{ r.estado }}
+                            </span>
+                        </td>
+                        <td>
+                            <a [routerLink]="['/reservaciones', r.idReservacion]"
+                                class="btn btn-secondary btn-sm">Ver</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (reservaciones.length === 0) {
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p>Este cliente aún no tiene reservaciones</p>
+            </div>
+            }
+
+        </div>
+    </div>
+
+    }
+
+</div>

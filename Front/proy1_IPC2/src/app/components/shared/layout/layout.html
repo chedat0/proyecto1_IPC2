@@ -1,0 +1,105 @@
+<div class="app-shell">
+
+    <header class="app-header">
+        <div class="header-brand">
+            <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle menú">
+                <span class="menu-icon">☰</span>
+            </button>
+            <div class="brand-logo">
+                <img src="logo.png" alt="Horizontes Sin Límites" class="logo-img" />
+                <div class="brand-text">
+                    <span class="brand-name">Horizontes Sin Límites</span>
+                    <span class="brand-sub">Agencia de Viajes</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="user-info">
+                <div class="user-avatar">{{ initials }}</div>
+                <div class="user-details">
+                    <span class="user-name">{{ user?.nombreCompleto }}</span>
+                    <span class="user-role badge" [class]="roleBadge">{{ user?.rolNombre }}</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-light btn-sm" (click)="logout()">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <div class="app-body">
+        <nav class="app-sidebar" [class.open]="sidebarOpen">
+            <div class="nav-section">
+                <p class="nav-section-label">Principal</p>
+                <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" (click)="closeMobile()">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+            </div>
+
+            @if (isClienteOrAdmin) {
+            <div class="nav-section">
+                <p class="nav-section-label">Atención al Cliente</p>
+                <a routerLink="/clientes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    Clientes
+                </a>
+                <a routerLink="/reservaciones" routerLinkActive="nav-link--active" class="nav-link"
+                    (click)="closeMobile()">
+                    Reservaciones
+                </a>
+            </div>
+            }
+
+            @if (isOperacionesOrAdmin) {
+            <div class="nav-section">
+                <p class="nav-section-label">Operaciones</p>
+                <a routerLink="/destinos" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    Destinos
+                </a>
+                <a routerLink="/proveedores" routerLinkActive="nav-link--active" class="nav-link"
+                    (click)="closeMobile()">
+                    Proveedores
+                </a>
+                <a routerLink="/paquetes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    Paquetes
+                </a>
+            </div>
+            }
+
+            @if (isAdmin) {
+            <div class="nav-section">
+                <p class="nav-section-label">Administración</p>
+                <a routerLink="/reportes" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    Reportes
+                </a>
+                <a routerLink="/usuarios" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    Usuarios
+                </a>
+                <a routerLink="/carga" routerLinkActive="nav-link--active" class="nav-link" (click)="closeMobile()">
+                    <span class="nav-icon">📁</span> Carga de Datos
+                </a>
+            </div>
+            }
+        </nav>
+        @if (sidebarOpen) {
+        <div class="sidebar-overlay" (click)="closeMobile()"></div>
+        }
+
+        <main class="app-content">
+            <router-outlet />
+        </main>
+    </div>
+
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <strong>Horizontes Sin Límites</strong> — Agencia de Viajes
+            </div>
+            <div class="footer-links">
+                <span>IPC2 </span>
+                <span>Jefferson Gómez - 201830892</span>
+            </div>
+            <div class="footer-copy">
+                © {{ year }} Horizontes Sin Límites - tu agencia de viajes
+            </div>
+        </div>
+    </footer>
+
+</div>

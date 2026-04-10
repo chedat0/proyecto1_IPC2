@@ -1,0 +1,316 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Reportes Financieros</h1>
+            <p>Análisis y estadísticas</p>
+        </div>
+    </div>
+
+    <div class="card filter-card">
+        <div class="filter-row">
+            <div class="form-group filter-group">
+                <label class="form-label">Desde</label>
+                <input type="date" class="form-control" [(ngModel)]="desde" />
+            </div>
+            <div class="form-group filter-group">
+                <label class="form-label">Hasta</label>
+                <input type="date" class="form-control" [(ngModel)]="hasta" />
+            </div>
+            <button class="btn btn-primary" (click)="cargar()">Filtrar</button>
+            <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+        </div>
+        <p class="filter-hint">Dejar vacío para ver todos los registros</p>
+    </div>
+
+    <div class="tabs-bar">
+        @for (t of tabs; track t.id) {
+        <button class="tab-btn" [class.tab-btn--active]="tabActivo === t.id" (click)="cambiarTab(t.id)">
+            {{ t.icon }} {{ t.label }}
+        </button>
+        }
+    </div>
+
+    @if (error) { <div class="alert alert-error">{{ error }}</div> }
+    @if (loading) { <div class="loading-center">
+        <div class="spinner"></div>
+    </div> }
+
+    @if (tabActivo === 'ventas' && !loading) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Reporte de Ventas</h3>
+            <span class="badge badge-confirmada">{{ datos.length }} reservaciones</span>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No. Reservación</th>
+                        <th>Paquete</th>
+                        <th>Destino</th>
+                        <th>Agente</th>
+                        <th>Pasajeros</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (r of datos; track $index) {
+                    <tr>
+                        <td><code>{{ r.numero_reservacion }}</code></td>
+                        <td>{{ r.paquete }}</td>
+                        <td>{{ r.destino }}</td>
+                        <td>{{ r.agente }}</td>
+                        <td class="pasajeros-cell">{{ r.pasajeros }}</td>
+                        <td><strong>Q.{{ r.costo_total | number:'1.2-2' }}</strong></td>
+                        <td class="fecha-cell">{{ r.fecha_creacion | slice:0:10 }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (datos.length === 0) {
+        <div class="empty-state">
+            <p>Sin ventas en el período seleccionado</p>
+        </div>
+        }
+        @if (datos.length > 0) {
+        <div class="card-footer reporte-footer">
+            <span>Total registros: <strong>{{ datos.length }}</strong></span>
+            <span>Monto total: <strong class="total-highlight">Q.{{ totalVentas | number:'1.2-2' }}</strong></span>
+        </div>
+        }
+    </div>
+    }
+
+    @if (tabActivo === 'cancelaciones' && !loading) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Reporte de Cancelaciones</h3>
+            <span class="badge badge-cancelada">{{ datos.length }} cancelaciones</span>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No. Reservación</th>
+                        <th>Paquete</th>
+                        <th>Fecha Cancel.</th>
+                        <th>Monto Pagado</th>
+                        <th>% Reembolso</th>
+                        <th>Reembolso</th>
+                        <th>Pérdida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (c of datos; track $index) {
+                    <tr>
+                        <td><code>{{ c.numero_reservacion }}</code></td>
+                        <td>{{ c.paquete }}</td>
+                        <td class="fecha-cell">{{ c.fecha_cancelacion | slice:0:10 }}</td>
+                        <td>Q.{{ c.monto_pagado | number:'1.2-2' }}</td>
+                        <td>{{ c.porcentaje_reembolso }}%</td>
+                        <td class="monto-reembolso">Q.{{ c.monto_reembolso | number:'1.2-2' }}</td>
+                        <td class="monto-perdida">Q.{{ c.perdida_agencia | number:'1.2-2' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (datos.length === 0) {
+        <div class="empty-state">
+            <p>Sin cancelaciones en el período</p>
+        </div>
+        }
+        @if (datos.length > 0) {
+        <div class="card-footer reporte-footer">
+            <span>Total reembolsado: <strong class="monto-reembolso">Q.{{ totalReembolsos | number:'1.2-2'
+                    }}</strong></span>
+            <span>Total pérdidas: <strong class="monto-perdida">Q.{{ totalPerdidas | number:'1.2-2' }}</strong></span>
+        </div>
+        }
+    </div>
+    }
+
+    @if (tabActivo === 'ganancias' && !loading && datosSingle) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Reporte de Ganancias</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid-3">
+                <div class="ganancia-stat">
+                    <div class="ganancia-icon">📈</div>
+                    <div class="ganancia-val">Q.{{ datosSingle.gananciaBruta | number:'1.0-0' }}</div>
+                    <div class="ganancia-lbl">Ganancia Bruta</div>
+                </div>
+                <div class="ganancia-stat">
+                    <div class="ganancia-icon">↩️</div>
+                    <div class="ganancia-val monto-perdida">Q.{{ datosSingle.totalReembolsos | number:'1.0-0' }}</div>
+                    <div class="ganancia-lbl">Total Reembolsos</div>
+                </div>
+                <div class="ganancia-stat ganancia-stat--highlight">
+                    <div class="ganancia-icon">✅</div>
+                    <div class="ganancia-val monto-reembolso">Q.{{ datosSingle.gananciaNeta | number:'1.0-0' }}</div>
+                    <div class="ganancia-lbl">Ganancia Neta</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (tabActivo === 'agente-ventas' && !loading) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Agentes por Ventas</h3>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Agente</th>
+                        <th>Usuario</th>
+                        <th>Reservaciones</th>
+                        <th>Monto Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (a of datos; track $index; let i = $index) {
+                    <tr [class.fila-top]="i === 0">
+                        <td class="text-center">{{ medallon(i) }} {{ i + 1 }}</td>
+                        <td><strong>{{ a.agente }}</strong></td>
+                        <td><code>{{ a.username }}</code></td>
+                        <td class="text-center">{{ a.total_reservaciones }}</td>
+                        <td><strong>Q.{{ a.monto_total | number:'1.2-2' }}</strong></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (datos.length === 0) {
+        <div class="empty-state">
+            <p>Sin datos en el período</p>
+        </div>
+        }
+    </div>
+    }
+
+    @if (tabActivo === 'agente-ganancias' && !loading) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Agentes por Ganancias Generadas</h3>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Agente</th>
+                        <th>Usuario</th>
+                        <th>Ganancia Generada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (a of datos; track $index; let i = $index) {
+                    <tr [class.fila-top]="i === 0">
+                        <td class="text-center">{{ medallon(i) }} {{ i + 1 }}</td>
+                        <td><strong>{{ a.agente }}</strong></td>
+                        <td><code>{{ a.username }}</code></td>
+                        <td><strong class="monto-reembolso">Q.{{ a.ganancia_generada | number:'1.2-2' }}</strong></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (datos.length === 0) {
+        <div class="empty-state">
+            <p>Sin datos en el período</p>
+        </div>
+        }
+    </div>
+    }
+
+    @if ((tabActivo === 'paquete-mas' || tabActivo === 'paquete-menos') && !loading && datosSingle) {
+    <div class="card">
+        <div class="card-header">
+            <h3>{{ tabActivo === 'paquete-mas' ? ' Paquete Más Vendido' : ' Paquete Menos Vendido' }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="paquete-resumen">
+                <div class="paquete-info">
+                    <span class="paquete-nombre">{{ datosSingle.nombrePaquete }}</span>
+                    <span class="badge badge-activo">{{ datosSingle.totalVentas }} ventas</span>
+                </div>
+                <span class="paquete-destino">{{ datosSingle.destino }}</span>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No. Reservación</th>
+                        <th>Fecha Viaje</th>
+                        <th>Pasajeros</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (r of datosSingle.reservaciones || []; track $index) {
+                    <tr>
+                        <td><code>{{ r.numero_reservacion }}</code></td>
+                        <td>{{ r.fecha_viaje }}</td>
+                        <td class="text-center">{{ r.cantidad_pasajeros }}</td>
+                        <td>Q.{{ r.costo_total | number:'1.2-2' }}</td>
+                        <td><span class="badge badge-confirmada">{{ r.estado }}</span></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (!datosSingle.reservaciones?.length) {
+        <div class="empty-state">
+            <p>Sin reservaciones en el período</p>
+        </div>
+        }
+    </div>
+    }
+
+    @if (tabActivo === 'ocupacion' && !loading) {
+    <div class="card">
+        <div class="card-header">
+            <h3>Ocupación por Destino</h3>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Destino</th>
+                        <th>País</th>
+                        <th class="text-center">Reservaciones</th>
+                        <th class="text-center">Pasajeros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (o of datos; track $index) {
+                    <tr>
+                        <td><strong>{{ o.destino }}</strong></td>
+                        <td>{{ o.pais }}</td>
+                        <td class="text-center">{{ o.total_reservaciones }}</td>
+                        <td class="text-center">{{ o.total_pasajeros }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (datos.length === 0) {
+        <div class="empty-state">
+            <p>Sin datos de ocupación en el período</p>
+        </div>
+        }
+    </div>
+    }
+
+</div>

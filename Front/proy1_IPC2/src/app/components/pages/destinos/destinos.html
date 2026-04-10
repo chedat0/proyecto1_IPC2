@@ -1,0 +1,125 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Destinos Turísticos</h1>
+            <p>Gestión de destinos disponibles</p>
+        </div>
+        <button class="btn btn-primary" (click)="abrirModal()">+ Nuevo Destino</button>
+    </div>
+
+    @if (error) { <div class="alert alert-error">{{ error }}</div> }
+    @if (success) { <div class="alert alert-success">{{ success }}</div> }
+
+    <div class="card">
+        @if (loading) {
+        <div class="loading-center">
+            <div class="spinner"></div>
+        </div>
+        }
+
+        @if (!loading) {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>País</th>
+                        <th>Descripción</th>
+                        <th>Clima</th>
+                        <th>Mejor Época</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (d of destinos; track d.idDestino) {
+                    <tr>
+                        <td><strong>{{ d.nombre }}</strong></td>
+                        <td>{{ d.pais }}</td>
+                        <td class="td-truncate">{{ d.descripcion || '—' }}</td>
+                        <td>{{ d.clima || '—' }}</td>
+                        <td>{{ d.mejorEpoca || '—' }}</td>
+                        <td>
+                            <span class="badge" [class]="d.activo ? 'badge-activo' : 'badge-inactivo'">
+                                {{ d.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
+                        <td class="td-actions">
+                            <button class="btn btn-secondary btn-sm" (click)="editarDestino(d)">Editar</button>
+                            <button class="btn btn-danger btn-sm"
+                                (click)="eliminarDestino(d.idDestino!)">Eliminar</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (destinos.length === 0) {
+        <div class="empty-state">            
+            <p>No hay destinos registrados</p>
+        </div>
+        }
+        }
+    </div>
+
+</div>
+
+@if (showModal) {
+<div class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>{{ editando ? 'Editar Destino' : 'Nuevo Destino' }}</h3>
+            <button class="btn btn-secondary btn-sm" (click)="cerrarModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="form">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Nombre *</label>
+                        <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Cancún" />
+                        @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+                        <span class="form-error">Requerido</span>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">País *</label>
+                        <input type="text" class="form-control" formControlName="pais" placeholder="Ej: México" />
+                        @if (form.get('pais')?.invalid && form.get('pais')?.touched) {
+                        <span class="form-error">Requerido</span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" formControlName="descripcion" rows="2"
+                        placeholder="Breve descripción del destino"></textarea>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Clima</label>
+                        <input type="text" class="form-control" formControlName="clima"
+                            placeholder="Ej: Tropical húmedo" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mejor Época para Visitar</label>
+                        <input type="text" class="form-control" formControlName="mejorEpoca"
+                            placeholder="Ej: Noviembre a Abril" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">URL de Imagen representativa</label>
+                    <input type="url" class="form-control" formControlName="urlImagen" placeholder="https://..." />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+            <button class="btn btn-primary" (click)="guardar()" [disabled]="saving">
+                {{ saving ? 'Guardando...' : (editando ? 'Actualizar' : 'Crear Destino') }}
+            </button>
+        </div>
+    </div>
+</div>
+}

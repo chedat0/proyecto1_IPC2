@@ -1,0 +1,67 @@
+<div class="login-page">
+    <div class="login-left">
+        <div class="login-brand">
+            <img src="logo.png" alt="Logo" class="login-logo" />
+            <h1 class="login-brand-name">Horizontes Sin Límites</h1>
+            <p class="login-brand-sub">Agencia de Viajes</p>
+        </div>
+        <div class="login-tagline">
+            <h2>Administra tu agencia de viajes</h2>
+            <p>Gestión completa de reservaciones, paquetes, clientes y reportes</p>
+        </div>
+        <div class="login-features">
+            <div class="feature">Gestión de paquetes turísticos</div>
+            <div class="feature">Reservaciones en tiempo real</div>
+            <div class="feature">Reportes financieros completos</div>
+            <div class="feature">Control de clientes y agentes</div>
+        </div>
+    </div>
+
+    <div class="login-right">
+        <div class="login-card">
+            <div class="login-card-header">
+                <h3>Iniciar Sesión</h3>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+
+            @if (errorMsg) {
+            <div class="alert alert-error">
+                <span>⚠️</span> {{ errorMsg }}
+            </div>
+            }
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label class="form-label">Usuario</label>
+                    <input type="text" class="form-control" formControlName="usuario" placeholder="Nombre de usuario"
+                        autocomplete="usuario" />
+                    @if (form.get('usuario')?.invalid && form.get('usuario')?.touched) {
+                    <span class="form-error">El usuario es requerido</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input [type]="showPass ? 'text' : 'password'" class="form-control" formControlName="password"
+                            placeholder="Contraseña" autocomplete="current-password" />
+                        <button type="button" class="pass-toggle" (click)="showPass = !showPass">                            
+                        </button>
+                    </div>
+                    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                    <span class="form-error">La contraseña es requerida</span>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn" [disabled]="loading">
+                    @if (loading) {
+                    <span class="btn-spinner"></span>
+                    <span>Ingresando...</span>
+                    } @else {
+                    <span>Ingresar al Sistema →</span>
+                    }
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

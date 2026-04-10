@@ -1,0 +1,91 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Reservaciones</h1>
+            <p>Gestión de reservaciones de viaje</p>
+        </div>
+        <a routerLink="/reservaciones/nueva" class="btn btn-primary">+ Nueva Reservación</a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card filter-card">
+        <button class="btn btn-sm" [class.btn-primary]="filtro==='todas'" [class.btn-secondary]="filtro!=='todas'"
+            (click)="setFiltro('todas')">Todas</button>
+        <button class="btn btn-sm" [class.btn-primary]="filtro==='hoy'" [class.btn-secondary]="filtro!=='hoy'"
+            (click)="setFiltro('hoy')">Hoy</button>
+        <button class="btn btn-sm" [class.btn-primary]="filtro==='PENDIENTE'"
+            [class.btn-secondary]="filtro!=='PENDIENTE'" (click)="setFiltro('PENDIENTE')">Pendientes</button>
+        <button class="btn btn-sm" [class.btn-primary]="filtro==='CONFIRMADA'"
+            [class.btn-secondary]="filtro!=='CONFIRMADA'" (click)="setFiltro('CONFIRMADA')">Confirmadas</button>
+        <span class="filter-count">{{ reservacionesFiltradas.length }} resultado(s)</span>
+    </div>
+
+    <div class="card">
+
+        @if (loading) {
+        <div class="loading-center">
+            <div class="spinner"></div>
+        </div>
+        }
+
+        @if (error) {
+        <div class="alert alert-error" style="margin:16px">{{ error }}</div>
+        }
+
+        @if (!loading) {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No. Reservación</th>
+                        <th>Paquete / Destino</th>
+                        <th>Fecha Viaje</th>
+                        <th class="text-center">Pasajeros</th>
+                        <th>Total</th>
+                        <th>Pagado</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (r of reservacionesFiltradas; track r.idReservacion) {
+                    <tr>
+                        <td><code class="res-num">{{ r.numeroReservacion }}</code></td>
+                        <td>
+                            <div class="paquete-nombre">{{ r.paqueteNombre }}</div>
+                            <div class="destino-nombre">{{ r.destinoNombre }}</div>
+                        </td>
+                        <td>{{ r.fechaViaje }}</td>
+                        <td class="text-center">{{ r.cantidadPasajeros }}</td>
+                        <td>Q.{{ r.costoTotal | number:'1.2-2' }}</td>
+                        <td [class.monto-completo]="(r.totalPagado || 0) >= (r.costoTotal || 0)"
+                            [class.monto-parcial]="(r.totalPagado || 0) < (r.costoTotal || 0)">
+                            Q.{{ r.totalPagado | number:'1.2-2' }}
+                        </td>
+                        <td>
+                            <span class="badge" [class]="'badge-' + r.estado!.toLowerCase()">{{ r.estado }}</span>
+                        </td>
+                        <td class="text-right">
+                            <a [routerLink]="['/reservaciones', r.idReservacion]"
+                                class="btn btn-secondary btn-sm">Ver</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (reservacionesFiltradas.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <h4>No hay reservaciones</h4>
+            <a routerLink="/reservaciones/nueva" class="btn btn-primary" style="margin-top:16px">
+                Crear reservación
+            </a>
+        </div>
+        }
+        }
+
+    </div>
+</div>

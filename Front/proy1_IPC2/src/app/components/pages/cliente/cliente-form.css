@@ -1,0 +1,12 @@
+.form-container {
+    max-width: 700px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: 1px solid var(--borde);
+}

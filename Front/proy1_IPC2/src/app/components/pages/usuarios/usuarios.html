@@ -1,0 +1,144 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1>Gestión de Usuarios</h1>
+            <p>Administración de accesos al sistema</p>
+        </div>
+        <button class="btn btn-primary" (click)="abrirModal()">+ Nuevo Usuario</button>
+    </div>
+
+    @if (error) { <div class="alert alert-error">{{ error }}</div> }
+    @if (success) { <div class="alert alert-success">{{ success }}</div> }
+
+    <div class="card">
+        @if (loading) {
+        <div class="loading-center">
+            <div class="spinner"></div>
+        </div>
+        }
+
+        @if (!loading) {
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Creado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (u of usuarios; track u.idUsuario) {
+                    <tr>
+                        <td><code class="username">{{ u.usuario }}</code></td>
+                        <td><strong>{{ u.nombreCompleto }}</strong></td>
+                        <td>
+                            <span class="badge" [class]="rolBadge(u.rol)">
+                                {{ rolNombre(u.rol) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge" [class]="u.activo ? 'badge-activo' : 'badge-inactivo'">
+                                {{ u.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
+                        <td class="fecha">
+                            {{ u.fechaCreacion ? (u.fechaCreacion | slice:0:10) : '—' }}
+                        </td>
+                        <td class="td-actions">
+                            <button class="btn btn-secondary btn-sm" (click)="editar(u)">Editar</button>
+                            @if (u.activo) {
+                            <button class="btn btn-danger btn-sm" (click)="desactivar(u)">Desactivar</button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (usuarios.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">🔑</div>
+            <p>Sin usuarios registrados</p>
+        </div>
+        }
+        }
+    </div>
+</div>
+
+@if (showModal) {
+<div class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>{{ editando ? 'Editar Usuario' : 'Nuevo Usuario' }}</h3>
+            <button class="btn btn-secondary btn-sm" (click)="cerrar()">✕</button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="form">
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de Usuario *</label>
+                        <input type="text" class="form-control" formControlName="username" [readonly]="editando"
+                            placeholder="Ej: jperez" />
+                        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+                        <span class="form-error">Requerido</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Contraseña {{ editando ? '(dejar vacío para no cambiar)' : '*' }}
+                        </label>
+                        <input type="password" class="form-control" formControlName="password"
+                            placeholder="Mínimo 6 caracteres" />
+                        @if (!editando && form.get('password')?.invalid && form.get('password')?.touched) {
+                        <span class="form-error">Mínimo 6 caracteres</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo *</label>
+                    <input type="text" class="form-control" formControlName="nombreCompleto"
+                        placeholder="Nombre completo del usuario" />
+                    @if (form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched) {
+                    <span class="form-error">Requerido</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Rol *</label>
+                    <select class="form-control" formControlName="rol">
+                        <option value="">Selecciona un rol...</option>
+                        <option value="1">Agente de Atención al Cliente</option>
+                        <option value="2">Encargado de Operaciones</option>
+                        <option value="3">Administrador</option>
+                    </select>
+                    @if (form.get('rol')?.invalid && form.get('rol')?.touched) {
+                    <span class="form-error">Selecciona un rol</span>
+                    }
+                </div>
+
+                @if (editando) {
+                <label class="checkbox-label">
+                    <input type="checkbox" formControlName="activo" />
+                    Usuario activo
+                </label>
+                }
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-primary" (click)="guardar()" [disabled]="saving">
+                {{ saving ? 'Guardando...' : 'Guardar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}
