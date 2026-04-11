@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,7 +19,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       usuario: ['', Validators.required],
@@ -38,6 +39,7 @@ export class LoginComponent {
       error: (e: Error) => {
         this.loading  = false;
         this.errorMsg = e.message || 'Error al iniciar sesión.';
+        this.cdr.detectChanges();
       }
     });
   }

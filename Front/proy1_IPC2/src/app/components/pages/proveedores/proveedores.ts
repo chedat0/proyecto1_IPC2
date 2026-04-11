@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProveedorService } from '../../../servicios/proveedor.service';
@@ -21,7 +21,7 @@ export class ProveedoresComponent implements OnInit {
   editId?: number;
   form!: FormGroup;
 
-  constructor(private svc: ProveedorService, private fb: FormBuilder) { }
+  constructor(private svc: ProveedorService, private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -37,8 +37,8 @@ export class ProveedoresComponent implements OnInit {
   cargar() {
     this.loading = true;
     this.svc.obtenerTodo().subscribe({
-      next: d => { this.proveedores = d; this.loading = false; },
-      error: e => { this.error = e.message; this.loading = false; }
+      next: d => { this.proveedores = d; this.loading = false; this.cdr.detectChanges();},
+      error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
     });
   }
 

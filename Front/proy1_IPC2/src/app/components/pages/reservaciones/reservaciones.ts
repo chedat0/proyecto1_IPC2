@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReservacionService } from '../../../servicios/reservacion.service';
@@ -17,15 +17,15 @@ export class ReservacionesComponent implements OnInit {
   error   = '';
   filtro  = 'todas';
 
-  constructor(private svc: ReservacionService) {}
+  constructor(private svc: ReservacionService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() { this.cargar(); }
 
   cargar() {
     this.loading = true;
     this.svc.obtenerTodas().subscribe({
-      next:  d => { this.reservaciones = d; this.loading = false; },
-      error: e => { this.error = e.message; this.loading = false; }
+      next:  d => { this.reservaciones = d; this.loading = false; this.cdr.detectChanges();},
+      error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
     });
   }
 

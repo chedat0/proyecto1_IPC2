@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,15 +19,15 @@ export class ClienteComponent implements OnInit{
   searchQ  = '';
   private debounce: any;
 
-  constructor(private svc: ClienteService) {}
+  constructor(private svc: ClienteService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() { this.cargar(); }
 
   cargar() {
     this.loading = true;
     this.svc.obtenerTodos().subscribe({
-      next:  data => { this.clientes = data; this.loading = false; },
-      error: e    => { this.error = e.message; this.loading = false; }
+      next:  data => { this.clientes = data; this.loading = false; this.cdr.detectChanges(); },
+      error: e    => { this.error = e.message; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -37,8 +37,8 @@ export class ClienteComponent implements OnInit{
       if (this.searchQ.trim().length < 2) { this.cargar(); return; }
       this.loading = true;
       this.svc.buscar(this.searchQ.trim()).subscribe({
-        next:  data => { this.clientes = data; this.loading = false; },
-        error: e    => { this.error = e.message; this.loading = false; }
+        next:  data => { this.clientes = data; this.loading = false; this.cdr.detectChanges(); },
+        error: e    => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
       });
     }, 350);
   }

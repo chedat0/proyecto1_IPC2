@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CargaService } from '../../../servicios/carga.service';
 
@@ -14,7 +14,7 @@ export class CargaComponent {
   resultado: any = null;
   dragOver  = false;
 
-  constructor(private svc: CargaService) {}
+  constructor(private svc: CargaService, private cdr: ChangeDetectorRef) {}
 
   onFileSelected(event: any) {
     const file = event.target.files?.[0];
@@ -44,11 +44,13 @@ export class CargaComponent {
     }
     this.archivoSeleccionado = file;
     this.resultado = null;
+    this.cdr.detectChanges();
   }
 
   quitarArchivo() {
     this.archivoSeleccionado = undefined;
     this.resultado = null;
+    this.cdr.detectChanges();
   }
 
   procesarArchivo() {
@@ -56,7 +58,7 @@ export class CargaComponent {
     this.loading   = true;
     this.resultado = null;
     this.svc.cargarArchivo(this.archivoSeleccionado).subscribe({
-      next:  res => { this.resultado = res; this.loading = false; },
+      next:  res => { this.resultado = res; this.loading = false; this.cdr.detectChanges();},
       error: e   => {
         this.resultado = {
           registrosProcesados: 0,
@@ -65,6 +67,7 @@ export class CargaComponent {
           errores:             [e.message]
         };
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

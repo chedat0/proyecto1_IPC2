@@ -23,6 +23,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th style="width:70px">Foto</th>
                         <th>Nombre</th>
                         <th>País</th>
                         <th>Descripción</th>
@@ -35,6 +36,13 @@
                 <tbody>
                     @for (d of destinos; track d.idDestino) {
                     <tr>
+                        <td>
+                            @if (d.urlImagen) {
+                            <img [src]="d.urlImagen" alt="{{ d.nombre }}" style="width:56px; height:42px; object-fit:cover;
+                                border-radius:6px; border:1px solid #E2E8F0;" />
+                            } @else {
+                            <span style="font-size:1.4rem">🌍</span>
+                            }
                         <td><strong>{{ d.nombre }}</strong></td>
                         <td>{{ d.pais }}</td>
                         <td class="td-truncate">{{ d.descripcion || '—' }}</td>
@@ -57,7 +65,7 @@
         </div>
 
         @if (destinos.length === 0) {
-        <div class="empty-state">            
+        <div class="empty-state">
             <p>No hay destinos registrados</p>
         </div>
         }
@@ -109,8 +117,17 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">URL de Imagen representativa</label>
-                    <input type="url" class="form-control" formControlName="urlImagen" placeholder="https://..." />
+                    <label class="form-label">Imagen del destino</label>
+                    <input type="text" class="form-control" formControlName="urlImagen"
+                        placeholder="destinos/cancun.jpg  ó  https://..." />
+
+                    @if (form.get('urlImagen')?.value) {
+                    <div style="margin-top:8px">
+                        <img [src]="form.get('urlImagen')?.value" alt="Preview" style="width:100%; max-height:150px; object-fit:cover;
+                            border-radius:8px; border:1px solid #E2E8F0;" (error)="$any($event.target).style.display='none'" />
+                        <span style="font-size:11px; color:#94A3B8">Vista previa</span>
+                    </div>
+                    }
                 </div>
             </form>
         </div>

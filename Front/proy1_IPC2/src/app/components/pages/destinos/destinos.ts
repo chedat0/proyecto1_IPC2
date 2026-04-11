@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DestinoService } from '../../../servicios/destino.service';
@@ -22,7 +22,7 @@ export class DestinosComponent implements OnInit {
   editId?: number;
   form!: FormGroup;
 
-  constructor(private svc: DestinoService, private fb: FormBuilder) {}
+  constructor(private svc: DestinoService, private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -39,8 +39,8 @@ export class DestinosComponent implements OnInit {
   cargar() {
     this.loading = true;
     this.svc.obtenerTodos().subscribe({
-      next:  d => { this.destinos = d; this.loading = false; },
-      error: e => { this.error = e.message; this.loading = false; }
+      next:  d => { this.destinos = d; this.loading = false; this.cdr.detectChanges(); },
+      error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioService } from '../../../servicios/usuario.service';
@@ -22,7 +22,7 @@ export class UsuariosComponent implements OnInit {
   editId?: number;
   form!: FormGroup;
 
-  constructor(private svc: UsuarioService, private fb: FormBuilder) { }
+  constructor(private svc: UsuarioService, private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -39,11 +39,13 @@ export class UsuariosComponent implements OnInit {
     this.loading = true; 
     this.svc.obtenerTodo().subscribe({ next: u => { 
       this.usuarios = u; 
-      this.loading = false; 
+      this.loading = false;
+      this.cdr.detectChanges(); 
     }, 
     error: e => { 
       this.error = e.message; 
       this.loading = false; 
+      this.cdr.detectChanges();
     }}); 
   }
 

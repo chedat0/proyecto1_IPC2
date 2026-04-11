@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DashboardService } from '../../../servicios/dashboard.service';
@@ -18,13 +18,14 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashSvc: DashboardService,
-    public  auth:    AuthService
+    public  auth:    AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.dashSvc.obtenerStats().subscribe({
-      next:  s => { this.stats = s; this.loading = false; },
-      error: e => { this.error = e.message; this.loading = false; }
+      next:  s => { this.stats = s; this.loading = false; this.cdr.detectChanges(); },
+      error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 

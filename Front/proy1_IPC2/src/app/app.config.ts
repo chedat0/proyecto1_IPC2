@@ -11,7 +11,7 @@ export const backEnd = {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
+    provideBrowserGlobalErrorListeners(),   
     provideRouter(routes),
     provideHttpClient(withInterceptors([errorInterceptor]))
   ]

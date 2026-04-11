@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,11 +27,7 @@ export class PaquetesComponent implements OnInit {
   editId?:  number;
   form!: FormGroup;
 
-  constructor(
-    private svc:     PaqueteService,
-    private destSvc: DestinoService,
-    private fb:      FormBuilder
-  ) {}
+  constructor(private svc: PaqueteService, private destSvc: DestinoService, private fb: FormBuilder, private cdr: ChangeDetectorRef ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -51,8 +47,8 @@ export class PaquetesComponent implements OnInit {
   cargar() {
     this.loading = true;
     this.svc.obtenerTodo().subscribe({
-      next:  p => { this.paquetes = p; this.loading = false; },
-      error: e => { this.error = e.message; this.loading = false; }
+      next:  p => { this.paquetes = p; this.loading = false; this.cdr.detectChanges(); },
+      error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
     });
   }
 
