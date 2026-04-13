@@ -8,7 +8,7 @@
         <div class="header-actions">
             <button class="btn btn-secondary" (click)="regresar()">← Volver</button>
             @if (cliente) {
-            <a [routerLink]="['/clientes', clienteId]" class="btn btn-primary">Editar datos</a>
+            <a [routerLink]="['/clientes', clienteId, 'editar']" class="btn btn-primary">Editar datos</a>
             }
         </div>
     </div>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="mini-stat">
                         <div class="mini-val">{{ reservacionesPendientes }}</div>
-                        <div class="mini-lbl">Pendientes de pago</div>
+                        <div class="mini-lbl">Saldo Pendiente</div>
                     </div>
                     <div class="mini-stat mini-stat--highlight">
                         <div class="mini-val mini-val--sm">Q.{{ totalGastado | number:'1.2-2' }}</div>

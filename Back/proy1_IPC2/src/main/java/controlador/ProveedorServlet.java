@@ -14,7 +14,6 @@ import java.util.Map;
 import modelo.Proveedor;
 import otros.BaseServlet;
 
-
 /**
  *
  * @author jeffm
@@ -23,11 +22,11 @@ import otros.BaseServlet;
 public class ProveedorServlet extends BaseServlet {
 
     private final ProveedorDAO dao = new ProveedorDAO();
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-            
+
         String path = req.getPathInfo();
         try {
             if (path == null || path.equals("/")) {
@@ -35,40 +34,62 @@ public class ProveedorServlet extends BaseServlet {
             } else {
                 int id = Integer.parseInt(extractIdFromPath(path));
                 Proveedor p = dao.obtenerPorId(id);
-                if (p == null) sendNotFound(resp, "Proveedor no encontrado.");
-                else sendOk(resp, p);
+                if (p == null) {
+                    sendNotFound(resp, "Proveedor no encontrado.");
+                } else {
+                    sendOk(resp, p);
+                }
             }
-        } catch (NumberFormatException e) { sendBadRequest(resp, "ID inválido.");
-        } catch (Exception e) { sendServerError(resp, e.getMessage()); }
+        } catch (NumberFormatException e) {
+            sendBadRequest(resp, "ID inválido.");
+        } catch (Exception e) {
+            sendServerError(resp, e.getMessage());
+        }
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {             
+            throws ServletException, IOException {
         try {
             Proveedor p = GSON.fromJson(req.getReader(), Proveedor.class);
-            if (p.getNombre() == null || p.getNombre().isBlank())
-                { sendBadRequest(resp, "Nombre es obligatorio."); return; }
-            if (p.getTipoServicio() < 1 || p.getTipoServicio() > 5)
-                { sendBadRequest(resp, "Tipo de servicio inválido (1-5)."); return; }
-            if (dao.obtenerPorNombre(p.getNombre()) != null)
-                { sendBadRequest(resp, "Ya existe un proveedor con ese nombre."); return; }
+            if (p.getNombre() == null || p.getNombre().isBlank()) {
+                sendBadRequest(resp, "Nombre es obligatorio.");
+                return;
+            }
+            if (p.getTipoServicio() < 1 || p.getTipoServicio() > 5) {
+                sendBadRequest(resp, "Tipo de servicio inválido (1-5).");
+                return;
+            }
+            if (dao.obtenerPorNombre(p.getNombre()) != null) {
+                sendBadRequest(resp, "Ya existe un proveedor con ese nombre.");
+                return;
+            }
             int id = dao.ingresar(p);
             sendCreated(resp, Map.of("idProveedor", id, "mensaje", "Proveedor creado correctamente."));
-        } catch (Exception e) { sendServerError(resp, e.getMessage()); }
-        
+        } catch (Exception e) {
+            sendServerError(resp, e.getMessage());
+        }
+
     }
-    
+
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             int id = Integer.parseInt(extractIdFromPath(req.getPathInfo()));
+            Proveedor existente = dao.obtenerPorId(id);
+            if (existente == null) {
+                sendNotFound(resp, "Proveedor no encontrado.");
+                return;
+            }
+
             Proveedor p = GSON.fromJson(req.getReader(), Proveedor.class);
-            p.setIdProveedor(id);
-            if (dao.obtenerPorId(id) == null) { sendNotFound(resp, "Proveedor no encontrado."); return; }
+            p.setIdProveedor(id);           
+            p.setActivo(existente.isActivo());
             dao.actualizar(p);
             sendOk(resp, Map.of("mensaje", "Proveedor actualizado correctamente."));
-        } catch (Exception e) { sendServerError(resp, e.getMessage()); }
+        } catch (Exception e) {
+            sendServerError(resp, e.getMessage());
+        }
     }
-   
+
 }

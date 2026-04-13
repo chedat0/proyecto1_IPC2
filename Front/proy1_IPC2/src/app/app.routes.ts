@@ -30,6 +30,11 @@ export const routes: Routes = [
                 loadComponent: () => import('./components/pages/cliente/detalle-cliente').then(m => m.DetalleClienteComponent)
             },
             {
+                path: 'clientes/:id/editar',
+                loadComponent: () => import('./components/pages/cliente/cliente-form')
+                    .then(m => m.ClienteFormComponent)
+            },
+            {
                 path: 'reservaciones',
                 loadComponent: () => import('./components/pages/reservaciones/reservaciones').then(m => m.ReservacionesComponent)
             },

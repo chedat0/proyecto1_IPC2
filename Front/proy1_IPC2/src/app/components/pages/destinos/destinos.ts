@@ -31,7 +31,8 @@ export class DestinosComponent implements OnInit {
       descripcion:[''],
       clima:      [''],
       mejorEpoca: [''],
-      urlImagen:  ['']
+      urlImagen:  [''],
+      activo: [true]
     });
     this.cargar();
   }

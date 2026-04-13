@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -51,11 +51,11 @@ export class DetalleReservacionComponent implements OnInit {
             next: r => {
                 this.reservacion = r;
                 this.pagoSvc.obtenerPorReservacion(id).subscribe({
-                    next: p => { this.pagos = p; this.loading = false; this.drc.detectChanges();},
-                    error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges();}
+                    next: p => { this.pagos = p; this.loading = false; this.drc.detectChanges(); },
+                    error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges(); }
                 });
             },
-            error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges();}
+            error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges(); }
         });
     }
 
@@ -65,7 +65,10 @@ export class DetalleReservacionComponent implements OnInit {
     }
 
     get puedeRegistrarPago() {
-        return this.reservacion?.estado === 'PENDIENTE' || this.reservacion?.estado === 'CONFIRMADA';
+        const tieneSaldo = (this.reservacion?.saldoPendiente || 0) > 0;
+        const estadoValido = ['PENDIENTE', 'CONFIRMADA', 'COMPLETADA']
+            .includes(this.reservacion?.estado || '');
+        return estadoValido && tieneSaldo;
     }
 
     get puedeCancelar() {
@@ -90,8 +93,20 @@ export class DetalleReservacionComponent implements OnInit {
                 this.cargar();
                 this.drc.detectChanges();
             },
-            error: e => { this.error = e.message; this.loadingPago = false; this.drc.detectChanges();}
+            error: e => { this.error = e.message; this.loadingPago = false; this.drc.detectChanges(); }
         });
+    }
+
+    abrirModalPago() {
+        const saldo = this.reservacion?.saldoPendiente || 0;
+        this.pagoForm.get('monto')?.setValidators([
+            Validators.required,
+            Validators.min(0.01),
+            Validators.max(saldo)   
+        ]);
+        this.pagoForm.get('monto')?.updateValueAndValidity();
+        this.pagoForm.patchValue({ monto: saldo }); 
+        this.showPagoModal = true;
     }
 
     procesarCancelacion() {
@@ -105,7 +120,7 @@ export class DetalleReservacionComponent implements OnInit {
                 this.cargar();
                 this.drc.detectChanges();
             },
-            error: e => { this.error = e.message; this.loadingCancelar = false; this.drc.detectChanges();}
+            error: e => { this.error = e.message; this.loadingCancelar = false; this.drc.detectChanges(); }
         });
     }
 

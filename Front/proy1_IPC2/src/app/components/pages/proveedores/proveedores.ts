@@ -29,7 +29,8 @@ export class ProveedoresComponent implements OnInit {
       tipoServicio: ['', [Validators.required, Validators.min(1)]],
       paisOperacion: [''],
       telefono: [''],
-      email: ['', Validators.email]
+      email: ['', Validators.email],
+      activo: [true]
     });
     this.cargar();
   }

@@ -34,8 +34,8 @@ export class ReservacionesComponent implements OnInit {
     if (f === 'hoy') {
       this.loading = true;
       this.svc.obtenerHoy().subscribe({
-        next:  d => { this.reservaciones = d; this.loading = false; },
-        error: e => { this.error = e.message; this.loading = false; }
+        next:  d => { this.reservaciones = d; this.loading = false; this.cdr.detectChanges(); },
+        error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
       });
     } else if (f === 'todas') {
       this.cargar();

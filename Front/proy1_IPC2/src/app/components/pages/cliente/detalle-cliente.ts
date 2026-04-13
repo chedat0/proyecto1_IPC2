@@ -15,7 +15,7 @@ export class DetalleClienteComponent implements OnInit {
     cliente?: Cliente;
     reservaciones: Reservacion[] = [];
     loading = true;
-    error = '';
+    error = '';    
     clienteId!: number;
 
     constructor(
@@ -38,7 +38,7 @@ export class DetalleClienteComponent implements OnInit {
             error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
         });
     }
-
+        
     get totalReservaciones() { 
         return this.reservaciones.length; 
     }
@@ -48,11 +48,11 @@ export class DetalleClienteComponent implements OnInit {
     }
 
     get reservacionesPendientes() { 
-        return this.reservaciones.filter(r => r.estado === 'PENDIENTE').length; 
+        return this.reservaciones.filter(r => r.estado !== 'CANCELADA' && (r.saldoPendiente || 0 > 0)).length; 
     }
     
     get totalGastado() {
-        return this.reservaciones.filter(r => r.estado !== 'CANCELADA').reduce((s, r) => s + (r.costoTotal || 0), 0); 
+        return this.reservaciones.filter(r => r.estado !== 'CANCELADA').reduce((s, r) => s + (r.totalPagado || 0), 0); 
     }
 
     regresar() { this.router.navigate(['/clientes']); }

@@ -30,7 +30,7 @@
     @if (reservacion && !loading) {
 
     <div class="grid-2 detail-top">
-    
+
         <div class="card">
             <div class="card-header">
                 <h3>Información de la Reservación</h3>
@@ -75,7 +75,7 @@
                     <strong>Saldo pendiente</strong>
                     <strong class="saldo-pendiente">Q.{{ reservacion.saldoPendiente | number:'1.2-2' }}</strong>
                 </div>
-                
+
                 <div class="progress-section">
                     <div class="progress-header">
                         <span>Progreso de pago</span>
@@ -87,15 +87,38 @@
                 </div>
 
                 @if (puedeRegistrarPago) {
-                <button class="btn btn-primary btn-full" (click)="showPagoModal = true">
+                <button class="btn btn-primary btn-full" (click)="abrirModalPago()">
                     + Registrar Pago
                 </button>
+                <div class="form-group">
+                    <label class="form-label">
+                        Monto a pagar
+                        <span style="color:#606C7A; font-weight:400; font-size:0.82rem">
+                            (Saldo pendiente: Q.{{ (reservacion.saldoPendiente || 0) | number:'1.2-2' }})
+                        </span>
+                    </label>
+                    <input type="number" class="form-control" formControlName="monto" min="0.01"
+                        [max]="reservacion.saldoPendiente || 0" step="0.01" />
+
+                    @if (pagoForm.get('monto')?.errors?.['required'] && pagoForm.get('monto')?.touched) {
+                    <span class="form-error">Ingresa un monto</span>
+                    }
+                    @if (pagoForm.get('monto')?.errors?.['min'] && pagoForm.get('monto')?.touched) {
+                    <span class="form-error">El monto debe ser mayor a cero</span>
+                    }
+                    @if (pagoForm.get('monto')?.errors?.['max'] && pagoForm.get('monto')?.touched) {
+                    <span class="form-error">
+                        El monto no puede superar el saldo pendiente
+                        (Q.{{ (reservacion.saldoPendiente || 0) | number:'1.2-2' }})
+                    </span>
+                    }
+                </div>
                 }
             </div>
         </div>
 
     </div>
-    
+
     <div class="card" style="margin-bottom:20px">
         <div class="card-header">
             <h3>Pasajeros</h3>
@@ -123,7 +146,7 @@
             </table>
         </div>
     </div>
-    
+
     <div class="card" style="margin-bottom:20px">
         <div class="card-header">
             <h3>Historial de Pagos</h3>

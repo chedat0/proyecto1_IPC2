@@ -5,6 +5,15 @@
             <h1>Reportes Financieros</h1>
             <p>Análisis y estadísticas</p>
         </div>
+        @if (!loading && (datos.length > 0 || datosSingle)) {
+        <button class="btn btn-primary" (click)="exportarPDF()" [disabled]="exportando">
+            @if (exportando) {
+            <span class="btn-spinner"></span> Generando PDF...
+            } @else {
+                Exportar PDF
+            }
+        </button>
+        }
     </div>
 
     <div class="card filter-card">
@@ -22,8 +31,9 @@
         </div>
         <p class="filter-hint">Dejar vacío para ver todos los registros</p>
     </div>
-
-    <div class="tabs-bar">
+    
+<div #reporteContenido>
+        <div class="tabs-bar">
         @for (t of tabs; track t.id) {
         <button class="tab-btn" [class.tab-btn--active]="tabActivo === t.id" (click)="cambiarTab(t.id)">
             {{ t.icon }} {{ t.label }}
@@ -312,5 +322,6 @@
         }
     </div>
     }
+</div>
 
 </div>

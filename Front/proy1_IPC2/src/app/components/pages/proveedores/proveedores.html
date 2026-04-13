@@ -110,6 +110,11 @@
                 </div>
             </form>
         </div>
+        @if (editando) {
+        <label class="checkbox-label">
+            <input type="checkbox" formControlName="activo" /> Proveedor activo
+        </label>
+        }
         <div class="modal-footer">
             <button class="btn btn-secondary" (click)="cerrar()">Cancelar</button>
             <button class="btn btn-primary" (click)="guardar()" [disabled]="saving">
