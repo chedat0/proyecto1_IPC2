@@ -28,7 +28,7 @@ public class PaqueteDAO {
     public List<Paquete> obtenerTodos() throws SQLException {
         List<Paquete> lista = new ArrayList<>();
         String sql = "SELECT p.*, d.nombre AS dest_nombre, d.pais AS dest_pais, " +
-                     "COALESCE(SUM(sp.costo_proveedor),0 AS costo_total, " +
+                     "COALESCE(SUM(sp.costo_proveedor),0) AS costo_total, " +
                      "p.precio_venta - COALESCE(SUM(sp.costo_proveedor),0) AS ganancia " +
                      "FROM paquete p JOIN destino d ON p.id_destino=d.id_destino " +
                      "LEFT JOIN servicios_paquete sp ON p.id_paquete=sp.id_paquete " +
@@ -114,7 +114,7 @@ public class PaqueteDAO {
                      "FROM paquete p JOIN destino d ON p.id_destino=d.id_destino " + 
                      "LEFT JOIN servicios_paquete sp ON p.id_paquete=sp.id_paquete " + 
                      "WHERE p.activo=TRUE AND (" +
-                     "  SELECT COUNT (*) FROM reservacion r " +
+                     "  SELECT COUNT(*) FROM reservacion r " +
                      "  WHERE r.id_paquete=p.id_paquete AND r.estado IN ('PENDIENTE','CONFIRMADA') AND r.fecha_viaje>=CURDATE()" +
                      ") * 100.0 / p.capacidad_maxima > 80 " +
                      "GROUP BY p.id_paquete ORDER BY p.nombre";

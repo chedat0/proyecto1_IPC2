@@ -43,15 +43,15 @@
                     <div class="detail-row"><span class="detail-label">No.
                             Reservación</span><code>{{ reservacion.numeroReservacion }}</code></div>
                     <div class="detail-row"><span class="detail-label">Paquete</span><strong>{{
-                            reservacion.paqueteNombre }}</strong></div>
-                    <div class="detail-row"><span class="detail-label">Destino</span><span>{{ reservacion.destinoNombre
+                            reservacion.nombrePaquete }}</strong></div>
+                    <div class="detail-row"><span class="detail-label">Destino</span><span>{{ reservacion.nombreDestino
                             }}</span></div>
                     <div class="detail-row"><span class="detail-label">Fecha de viaje</span><strong>{{
                             reservacion.fechaViaje }}</strong></div>
                     <div class="detail-row"><span class="detail-label">Pasajeros</span><span>{{
                             reservacion.cantidadPasajeros }}</span></div>
-                    <div class="detail-row"><span class="detail-label">Agente</span><span>{{ reservacion.agenteNombre
-                            }}</span></div>
+                    <div class="detail-row"><span class="detail-label">Agente</span><span>{{ reservacion.nombreAgente
+                            }} {{ reservacion.usuarioAgente }}</span></div>
                     <div class="detail-row"><span class="detail-label">Fecha creación</span><span>{{
                             reservacion.fechaCreacion }}</span></div>
                 </div>

@@ -117,8 +117,8 @@
                     @for (r of reservaciones; track r.idReservacion) {
                     <tr>
                         <td><code>{{ r.numeroReservacion }}</code></td>
-                        <td>{{ r.paqueteNombre }}</td>
-                        <td>{{ r.destinoNombre }}</td>
+                        <td>{{ r.nombrePaquete }}</td>
+                        <td>{{ r.nombreDestino }}</td>
                         <td>{{ r.fechaViaje }}</td>
                         <td>Q.{{ r.costoTotal | number:'1.2-2' }}</td>
                         <td>

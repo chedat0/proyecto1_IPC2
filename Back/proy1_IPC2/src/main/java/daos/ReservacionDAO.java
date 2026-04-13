@@ -120,6 +120,7 @@ public class ReservacionDAO {
             ps.setInt(5, r.getCantidadPasajeros());
             ps.setDouble(6, r.getCostoTotal());
             ps.setString(7, r.getEstado() != null ? r.getEstado() : "PENDIENTE");
+            ps.executeUpdate();
             try (ResultSet gk = ps.getGeneratedKeys()){
                 if (gk.next()) return gk.getInt(1);
             }

@@ -36,9 +36,8 @@ public class CargaServlet extends BaseServlet {
             String fileName = filePart.getSubmittedFileName();
             if (fileName == null || !fileName.toLowerCase().endsWith(".txt"))
                 { sendBadRequest(res, "Solo se aceptan archivos .txt"); return; }
-
-            Usuario admin = (Usuario) req.getSession().getAttribute("usuario");
-            var resultado = cargaServicio.procesar(filePart.getInputStream(), admin.getIdUsuario());
+            
+            var resultado = cargaServicio.procesar(filePart.getInputStream());
             sendOk(res, resultado);
 
         } catch (Exception e) {

@@ -71,8 +71,18 @@ export class UsuariosComponent implements OnInit {
   guardar() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving = true; this.error = '';
-    const val = { ...this.form.value, rol: Number(this.form.value.rol) };
-    if (this.editando && !val.password) delete val.password;
+    const formVal = this.form.value;
+
+    const val: any = {
+        usuario:        formVal.usuario,
+        contraHasheada: formVal.password,
+        nombreCompleto: formVal.nombreCompleto,
+        rol:            Number(formVal.rol),
+        activo:         formVal.activo
+    };
+
+    if (this.editando && !val.contraHasheada) delete val.contraHasheada;
+
     const op = this.editando ? this.svc.actualizar(this.editId!, val) : this.svc.crear(val);
     op.subscribe({ next: () => { 
       this.success = this.editando ? 'Usuario actualizado.' : 'Usuario creado.'; 

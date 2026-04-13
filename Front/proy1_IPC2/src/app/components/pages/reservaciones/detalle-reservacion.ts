@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +32,8 @@ export class DetalleReservacionComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private resSvc: ReservacionService,
-        private pagoSvc: PagoService
+        private pagoSvc: PagoService,
+        private drc: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -50,11 +51,11 @@ export class DetalleReservacionComponent implements OnInit {
             next: r => {
                 this.reservacion = r;
                 this.pagoSvc.obtenerPorReservacion(id).subscribe({
-                    next: p => { this.pagos = p; this.loading = false; },
-                    error: e => { this.error = e.message; this.loading = false; }
+                    next: p => { this.pagos = p; this.loading = false; this.drc.detectChanges();},
+                    error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges();}
                 });
             },
-            error: e => { this.error = e.message; this.loading = false; }
+            error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges();}
         });
     }
 
@@ -87,8 +88,9 @@ export class DetalleReservacionComponent implements OnInit {
                 this.success = 'Pago registrado correctamente.';
                 this.pagoForm.reset();
                 this.cargar();
+                this.drc.detectChanges();
             },
-            error: e => { this.error = e.message; this.loadingPago = false; }
+            error: e => { this.error = e.message; this.loadingPago = false; this.drc.detectChanges();}
         });
     }
 
@@ -101,8 +103,9 @@ export class DetalleReservacionComponent implements OnInit {
                 this.success = `Reservación cancelada. Reembolso: Q.${can.montoReembolso}`;
                 this.loadingCancelar = false;
                 this.cargar();
+                this.drc.detectChanges();
             },
-            error: e => { this.error = e.message; this.loadingCancelar = false; }
+            error: e => { this.error = e.message; this.loadingCancelar = false; this.drc.detectChanges();}
         });
     }
 

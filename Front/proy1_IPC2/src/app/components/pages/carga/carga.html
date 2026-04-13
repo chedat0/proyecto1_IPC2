@@ -13,7 +13,7 @@
         </div>
         <div class="card-body">
             <div class="alert alert-info">
-                El archivo debe ser <strong>.txt</strong> con codificación <strong>UTF-8</strong>.
+                El archivo debe ser .txt con codificación UTF-8.
                 <span>ℹ️</span>
                 Cada línea es una instrucción. Las líneas que empiezan con <code>#</code> son comentarios.
             </div>
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="card">
         <div class="card-header">
             <h3>Cargar Archivo</h3>
@@ -65,8 +65,8 @@
                 (dragleave)="onDragLeave()" (drop)="onDrop($event)" (click)="fileInput.click()">
                 <div class="upload-icon">📁</div>
                 @if (!archivoSeleccionado) {
-                <p class="upload-title"><strong>Arrastra tu archivo aquí</strong> o haz clic para seleccionar</p>
-                <p class="upload-hint">Solo archivos .txt · Máximo 1MB</p>
+                <p class="upload-title">Haz clic para seleccionar</p>
+                <p class="upload-hint">Solo archivos .txt ·</p>
                 } @else {
                 <p class="upload-title"><strong>{{ archivoSeleccionado.name }}</strong></p>
                 <p class="upload-hint">{{ (archivoSeleccionado.size / 1024) | number:'1.0-0' }} KB · Listo para procesar
@@ -102,7 +102,7 @@
         </div>
     </div>
 
-    
+
     @if (resultado) {
     <div class="card result-card">
         <div class="card-header">
@@ -112,7 +112,7 @@
             </span>
         </div>
         <div class="card-body">
-        
+
             <div class="grid-3 result-stats">
                 <div class="result-stat">
                     <div class="result-num">{{ resultado.registrosProcesados }}</div>
@@ -127,7 +127,7 @@
                     <div class="result-lbl">Con errores</div>
                 </div>
             </div>
-            
+
             @if (resultado.registrosProcesados > 0) {
             <div class="success-bar-section">
                 <div class="success-bar-header">
@@ -139,10 +139,13 @@
                 </div>
             </div>
             }
-        
+
             @if (resultado.errores && resultado.errores.length > 0) {
             <div class="errores-section">
                 <p class="section-title">Errores encontrados</p>
+                <button class="btn btn-secondary btn-sm" (click)="descargarLineasConError()">
+                    Descargar líneas con error
+                </button>
                 <div class="errores-list">
                     @for (e of resultado.errores; track $index) {
                     <div class="error-item">
@@ -150,6 +153,11 @@
                         <span>{{ e }}</span>
                     </div>
                     }
+                </div>
+                <div class="alert alert-info" style="margin-top:14px; font-size:0.82rem">
+                    Los registros exitosos ya fueron guardados.
+                    Descarga el archivo de correcciones, edita solo las líneas marcadas con
+                    <code># ERROR</code> y vuelve a subirlo.
                 </div>
             </div>
             }

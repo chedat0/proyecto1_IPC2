@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReporteService } from '../../../servicios/reporte.service';
@@ -36,7 +36,7 @@ export class ReportesComponent implements OnInit {
     { id: 'ocupacion',        icon: '🌎', label: 'Ocupación' },
   ];
 
-  constructor(private svc: ReporteService) {}
+  constructor(private svc: ReporteService, private drc: ChangeDetectorRef) {}
 
   ngOnInit() { this.cargar(); }
 
@@ -74,8 +74,9 @@ export class ReportesComponent implements OnInit {
         if (isSingle) this.datosSingle = res;
         else          this.datos       = Array.isArray(res) ? res : [];
         this.loading = false;
+        this.drc.detectChanges();
       },
-      error: e => { this.error = e.message; this.loading = false; }
+      error: e => { this.error = e.message; this.loading = false; this.drc.detectChanges(); }
     });
   }
 

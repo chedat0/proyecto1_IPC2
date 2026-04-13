@@ -34,7 +34,7 @@ public class CargaServicio {
     private final PagoDAO       pagoDAO       = new PagoDAO();
     private final ReservacionDAO reservacionDAO = new ReservacionDAO();
 
-    public CargaResultado procesar(InputStream is, int idAdmin) throws Exception {
+    public CargaResultado procesar(InputStream is) throws Exception {
         List<String> errores = new ArrayList<>();
         int procesados = 0, exitosos = 0;
 
@@ -201,7 +201,7 @@ public class CargaServicio {
                 throw new Exception("Pasajero con el DPI '" + dpi.trim() + "' no existe.");
             idsPasajeros.add(cl.getIdCliente());
         }
-        reservacionServicio.crearReservacion(paquete.getIdPaquete(), agente.getIdUsuario(), fv.toString(), idsPasajeros);
+        reservacionServicio.crearReservacion(paquete.getIdPaquete(), agente.getIdUsuario(), fv.toString(), idsPasajeros, true);
     }
 
     private void procesarPago(String[] a) throws Exception {

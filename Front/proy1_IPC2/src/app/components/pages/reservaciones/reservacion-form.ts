@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -41,7 +41,8 @@ export class ReservacionFormComponent implements OnInit {
         private resSvc: ReservacionService,
         private paqSvc: PaqueteService,
         private cliSvc: ClienteService,
-        private destSvc: DestinoService
+        private destSvc: DestinoService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -73,8 +74,8 @@ export class ReservacionFormComponent implements OnInit {
         if (!this.busquedaCliente.trim()) return;
         this.sinResultados = false;
         this.cliSvc.buscar(this.busquedaCliente.trim()).subscribe({
-            next: res => { this.resultadosBusqueda = res; this.sinResultados = res.length === 0; },
-            error: e => this.error = e.message
+            next: res => { this.resultadosBusqueda = res; this.sinResultados = res.length === 0; this.cdr.detectChanges();},
+            error: e => {this.error = e.message, this.cdr.detectChanges();}
         });
     }
 
@@ -118,8 +119,9 @@ export class ReservacionFormComponent implements OnInit {
                 this.loading = false;
                 this.success = `Reservación ${res.numeroReservacion} creada exitosamente.`;
                 setTimeout(() => this.router.navigate(['/reservaciones', res.idReservacion]), 1500);
+                this.cdr.detectChanges();
             },
-            error: e => { this.error = e.message; this.loading = false; }
+            error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
         });
     }
 }

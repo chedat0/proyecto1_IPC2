@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ClienteService } from '../../../servicios/cliente.service';
@@ -21,7 +21,8 @@ export class DetalleClienteComponent implements OnInit {
     constructor(
         private svc: ClienteService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -30,11 +31,11 @@ export class DetalleClienteComponent implements OnInit {
             next: c => {
                 this.cliente = c;
                 this.svc.obtenerReservaciones(this.clienteId).subscribe({
-                    next: r => { this.reservaciones = r; this.loading = false; },
-                    error: e => { this.error = e.message; this.loading = false; }
+                    next: r => { this.reservaciones = r; this.loading = false; this.cdr.detectChanges();},
+                    error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
                 });
             },
-            error: e => { this.error = e.message; this.loading = false; }
+            error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges();}
         });
     }
 

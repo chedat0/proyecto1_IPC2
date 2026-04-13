@@ -14,6 +14,8 @@ export class CargaComponent {
   resultado: any = null;
   dragOver  = false;
 
+  private lineasOriginales: string[] = [];
+
   constructor(private svc: CargaService, private cdr: ChangeDetectorRef) {}
 
   onFileSelected(event: any) {
@@ -42,6 +44,14 @@ export class CargaComponent {
       alert('Solo se aceptan archivos .txt');
       return;
     }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const texto = e.target?.result as string;
+      this.lineasOriginales = texto.split('\n');
+    };
+    reader.readAsText(file, 'UTF-8');
+
     this.archivoSeleccionado = file;
     this.resultado = null;
     this.cdr.detectChanges();
@@ -70,6 +80,42 @@ export class CargaComponent {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  descargarLineasConError() {
+    if (!this.resultado?.errores?.length) return;
+
+    const lineasFallidas: string[] = [];
+
+    lineasFallidas.push('# ============================================');
+    lineasFallidas.push('# ARCHIVO DE CORRECCIONES');
+    lineasFallidas.push('# Contiene solo las líneas que fallaron.');
+    lineasFallidas.push('# Corrígelas y vuelve a subir este archivo.');
+    lineasFallidas.push('# ============================================');
+    lineasFallidas.push('');
+
+    for (const error of this.resultado.errores) {
+      const match = error.match(/Línea (\d+)/);
+      if (match) {
+        const numLinea = parseInt(match[1]) - 1;
+        const lineaOriginal = this.lineasOriginales[numLinea]?.trim();
+        if (lineaOriginal) {
+          lineasFallidas.push(`# ERROR: ${error.replace(/Línea \d+ \[.*?\]: /, '')}`);
+          lineasFallidas.push(lineaOriginal);
+          lineasFallidas.push('');
+        }
+      }
+    }
+
+    
+    const contenido = lineasFallidas.join('\n');
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'correcciones.txt';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   get porcentajeExito() {

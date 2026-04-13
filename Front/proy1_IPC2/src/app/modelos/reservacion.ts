@@ -4,10 +4,11 @@ export interface Reservacion {
     idReservacion?: number;
     numeroReservacion?: string;
     idPaquete?: number;
-    paqueteNombre?: string;
-    destinoNombre?: string;
+    nombrePaquete?: string;
+    nombreDestino?: string;
     idAgente?: number;
-    agenteNombre?: string;
+    nombreAgente?: string;
+    usuarioAgente?: string;
     fechaCreacion?: string;
     fechaViaje: string;
     cantidadPasajeros?: number;

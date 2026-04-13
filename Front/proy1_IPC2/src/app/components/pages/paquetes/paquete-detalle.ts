@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -29,7 +29,8 @@ export class PaqueteDetalleComponent implements OnInit {
         private route: ActivatedRoute,
         private svc: PaqueteService,
         private provSvc: ProveedorService,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -50,8 +51,9 @@ export class PaqueteDetalleComponent implements OnInit {
                 this.paquete = p;
                 this.servicios = p.servicios || [];
                 this.loading = false;
+                this.cdr.detectChanges();
             },
-            error: e => { this.error = e.message; this.loading = false; }
+            error: e => { this.error = e.message; this.loading = false; this.cdr.detectChanges(); }
         });
     }
 
@@ -86,15 +88,16 @@ export class PaqueteDetalleComponent implements OnInit {
                 this.success = 'Servicio agregado correctamente.';
                 this.servicioForm.reset();
                 this.cargar();
+                this.cdr.detectChanges();
             },
-            error: e => { this.error = e.message; this.savingServicio = false; }
+            error: e => { this.error = e.message; this.savingServicio = false; this.cdr.detectChanges(); }
         });
     }
 
     eliminarServicio(id: number) {
         if (!confirm('¿Eliminar este servicio del paquete?')) return;
         this.svc.eliminarServicio(id).subscribe({
-            next: () => { this.success = 'Servicio eliminado.'; this.cargar(); },
+            next: () => { this.success = 'Servicio eliminado.'; this.cargar(); this.cdr.detectChanges();},
             error: e => this.error = e.message
         });
     }

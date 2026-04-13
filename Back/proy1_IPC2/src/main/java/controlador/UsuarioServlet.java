@@ -72,6 +72,7 @@ public class UsuarioServlet extends BaseServlet {
             if (u == null) { sendNotFound(resp, "Usuario no encontrado."); return; }
 
             u = new Usuario();
+            u.setIdUsuario(id);
             if (body.has("nombreCompleto")) u.setNombreCompleto(body.get("nombreCompleto").getAsString());
             if (body.has("rol"))            u.setRol(body.get("rol").getAsInt());
             if (body.has("activo"))         u.setActivo(body.get("activo").getAsBoolean());

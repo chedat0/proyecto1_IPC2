@@ -83,9 +83,9 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label class="form-label">Nombre de Usuario *</label>
-                        <input type="text" class="form-control" formControlName="username" [readonly]="editando"
+                        <input type="text" class="form-control" formControlName="usuario" [readonly]="editando"
                             placeholder="Ej: jperez" />
-                        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+                        @if (form.get('usuario')?.invalid && form.get('usuario')?.touched) {
                         <span class="form-error">Requerido</span>
                         }
                     </div>
